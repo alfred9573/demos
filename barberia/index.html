@@ -307,6 +307,11 @@ button, input, select { font: inherit; color: inherit; }
 .caja p:last-child { margin-bottom: 0; }
 .letra-chica { color: var(--muted); font-size: 13px; }
 
+.plan-grid { display: grid; gap: 16px; }
+.plan-grid:has(.paquetes.uno) { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+@media (max-width: 900px) { .plan-grid:has(.paquetes.uno) { grid-template-columns: minmax(0, 1fr); } }
+.paquetes.uno { grid-template-columns: minmax(0, 1fr); max-width: none; }
+.pasos ol { margin: 0 0 12px; padding-left: 20px; display: grid; gap: 8px; }
 .regalo {
   margin: -4px 0 0; font-size: 13.5px; color: var(--brass);
   border: 1px dashed var(--brass); border-radius: 8px; padding: 6px 10px;
@@ -405,7 +410,7 @@ input[type="range"] { width: 100%; accent-color: var(--brass); }
   <nav class="pestanas" role="tablist" aria-label="Secciones">
     <button role="tab" id="t-demo" aria-controls="demo" aria-selected="true" data-tab="demo">Pruébalo</button>
     <button role="tab" id="t-web" aria-controls="web" aria-selected="false" data-tab="web">Tu página web</button>
-    <button role="tab" id="t-paquetes" aria-controls="paquetes" aria-selected="false" data-tab="paquetes">Paquetes</button>
+    <button role="tab" id="t-paquetes" aria-controls="paquetes" aria-selected="false" data-tab="paquetes"><span data-solo="propuesta">Paquetes</span><span data-solo="plan">Tu plan</span></button>
     <button role="tab" id="t-numeros" aria-controls="numeros" aria-selected="false" data-tab="numeros">¿Cuánto se te va?</button>
   </nav>
 
@@ -473,7 +478,7 @@ input[type="range"] { width: 100%; accent-color: var(--brass); }
         <div class="web" id="web-sitio"></div>
       </div>
       <aside class="web-porque">
-        <div class="eyebrow">Incluida en Pro y Premium</div>
+        <div class="eyebrow"><span data-solo="propuesta">Incluida en Pro y Premium</span><span data-solo="plan">Incluida en tu plan</span></div>
         <h2>Tu página web</h2>
         <ul class="razones">
           <li><b>Te encuentran en Google.</b> Cuando alguien busca “barbería cerca de mí”, una ficha con página, precios y fotos da más confianza que una vacía.</li>
@@ -493,16 +498,34 @@ input[type="range"] { width: 100%; accent-color: var(--brass); }
 
   <!-- ── Pestaña 2: paquetes ── -->
   <section id="paquetes" role="tabpanel" aria-labelledby="t-paquetes" hidden>
-    <div class="intro">
+    <div class="intro" data-solo="propuesta">
       <div class="eyebrow">Propuesta para <span class="js-nombre">Barbería El Filo</span></div>
       <h2>Tres formas de arrancar</h2>
       <p>Las tres funcionan en tu mismo WhatsApp de negocio. Tus clientes no bajan ninguna app: te escriben como siempre y el asistente les aparta su lugar.</p>
     </div>
-    <div class="paquetes" id="lista-paquetes"></div>
+    <div class="intro" data-solo="plan">
+      <div class="eyebrow">Lo que acordamos con <span class="js-nombre">Barbería El Filo</span></div>
+      <h2>Tu plan <span id="plan-nombre">Pro</span></h2>
+      <p>Tu asistente de citas en tu mismo WhatsApp de negocio, más tu página web. Tus clientes no bajan ninguna app: te escriben como siempre y el asistente les aparta su lugar.</p>
+    </div>
+    <div class="plan-grid">
+      <div class="paquetes" id="lista-paquetes"></div>
+      <div class="caja pasos" data-solo="plan">
+        <h4>Siguientes pasos</h4>
+        <ol>
+          <li><b>Anticipo de <span id="p-anticipo">$3,250</span></b> (50% de la implementación) para arrancar.</li>
+          <li><b>Nos pasas tus datos:</b> servicios y precios, barberos, horario y dirección, tu logo y fotos de tus cortes, el correo de Google de cada barbero y acceso a tu página de Facebook.</li>
+          <li><b>Damos de alta tu número</b> en la API oficial de WhatsApp. La verificación de Meta puede tardar unos días.</li>
+          <li><b>Armamos tu asistente y tu página</b>, y los pruebas tú antes de prenderlos.</li>
+          <li><b>Cuando lo veas funcionando:</b> el otro 50% (<span id="p-resto">$3,250</span>) y arranca la mensualidad de <span id="p-mes">$990</span>.</li>
+        </ol>
+        <p class="letra-chica">De 2 a 3 semanas desde que tengamos tus datos. Precios en pesos mexicanos, más IVA si requieres factura. Precio acordado el 12 de octubre de 2026.</p>
+      </div>
+    </div>
 
     <div class="caja extra">
       <h4>Agrégale Instagram</h4>
-      <p>Que el asistente también conteste y aparte citas desde los mensajes directos de tu Instagram, con la misma agenda. En Esencial o Pro: <b>+$1,500</b> de implementación y <b>+$190 al mes</b>. En Premium ya viene incluido.</p>
+      <p>Que el asistente también conteste y aparte citas desde los mensajes directos de tu Instagram, con la misma agenda. <span data-solo="propuesta">En Esencial o Pro: <b>+$1,500</b> de implementación y <b>+$190 al mes</b>. En Premium ya viene incluido.</span><span data-solo="plan">Si después lo quieres: <b>+$1,500</b> de implementación y <b>+$190 al mes</b>.</span></p>
     </div>
 
     <div class="incluye">
@@ -515,14 +538,14 @@ input[type="range"] { width: 100%; accent-color: var(--brass); }
           <li>Mantenimiento: si WhatsApp cambia algo, lo ajustamos nosotros.</li>
           <li>Soporte directo por WhatsApp si algo no funciona.</li>
           <li>Reporte cada mes: cuántas citas agendó el asistente y cuántos mensajes contestó por ti.</li>
-          <li>En Pro y Premium: tu página web en línea, con su dominio.</li>
+          <li><span data-solo="propuesta">En Pro y Premium: tu</span><span data-solo="plan">Tu</span> página web en línea, con su dominio.</li>
         </ul>
       </div>
       <div class="caja">
         <h4>La implementación y cómo se paga</h4>
-        <p>La implementación incluye dar de alta tu número en la API oficial de WhatsApp (sin trucos que pongan en riesgo tu número), cargar tus servicios, precios y barberos, armar tu página web (Pro y Premium) y enseñarte a usarlo a ti y a tu equipo.</p>
+        <p>La implementación incluye dar de alta tu número en la API oficial de WhatsApp (sin trucos que pongan en riesgo tu número), cargar tus servicios, precios y barberos, armar tu página web<span data-solo="propuesta"> (Pro y Premium)</span> y enseñarte a usarlo a ti y a tu equipo.</p>
         <p>Se paga <b>50% al arrancar</b> y <b>50% cuando ya lo veas funcionando</b>. La mensualidad empieza cuando el asistente empieza a atender.</p>
-        <p class="letra-chica">Precios en pesos mexicanos, más IVA si requieres factura. Propuesta válida hasta el 11 de noviembre de 2026.</p>
+        <p class="letra-chica" data-solo="propuesta">Precios en pesos mexicanos, más IVA si requieres factura. Propuesta válida hasta el 11 de noviembre de 2026.</p>
       </div>
     </div>
   </section>
@@ -551,9 +574,9 @@ input[type="range"] { width: 100%; accent-color: var(--brass); }
         <div class="control">
           <label for="nuevos">Clientes nuevos al mes por tu página y Google <output id="o-nuevos">3</output></label>
           <input id="nuevos" type="range" min="0" max="20" step="1" value="3">
-          <small>Solo cuenta en Pro y Premium, que traen página web.</small>
+          <small><span data-solo="propuesta">Solo cuenta en Pro y Premium, que traen página web.</span><span data-solo="plan">Tu plan incluye página web.</span></small>
         </div>
-        <div class="control">
+        <div class="control" data-solo="propuesta">
           <label for="paquete-sel">Paquete</label>
           <select id="paquete-sel"></select>
         </div>
@@ -615,6 +638,9 @@ input[type="range"] { width: 100%; accent-color: var(--brass); }
     ]
   };
   const negocio = { ...BASE };
+
+  // Plan que el cliente ya aceptó. null = propuesta con los tres paquetes.
+  const PLAN_ACORDADO = "pro";
 
   const PAQUETES = [
     {
@@ -1170,11 +1196,18 @@ input[type="range"] { width: 100%; accent-color: var(--brass); }
   function pintarPaquetes() {
     const cont = $("#lista-paquetes");
     cont.textContent = "";
-    for (const p of PAQUETES) {
+    const idx = PAQUETES.findIndex((x) => x.id === PLAN_ACORDADO);
+    const lista = idx >= 0
+      // Con plan acordado: solo ese paquete, con todo lo que incluye escrito completo.
+      ? [{ ...PAQUETES[idx], recomendado: true, todo: null,
+           items: PAQUETES.slice(0, idx + 1).flatMap((x) => x.items).sort((a, b) => (b.includes("página web") ? 1 : 0) - (a.includes("página web") ? 1 : 0)) }]
+      : PAQUETES;
+    cont.classList.toggle("uno", idx >= 0);
+    for (const p of lista) {
       const card = document.createElement("article");
       card.className = "paquete" + (p.recomendado ? " recomendado" : "");
       card.innerHTML =
-        (p.recomendado ? `<span class="etiqueta">Recomendado</span>` : "") +
+        (p.recomendado ? `<span class="etiqueta">${idx >= 0 ? "Tu plan" : "Recomendado"}</span>` : "") +
         `<h3>${esc(p.nombre)}</h3><p class="lema">${esc(p.lema)}</p>` +
         (p.regalo ? `<p class="regalo">${esc(p.regalo)}</p>` : "") +
         `<div class="precios"><div><span>Implementación</span><b>${pesos(p.impl)}</b><br><small>pago único</small></div>` +
@@ -1183,8 +1216,15 @@ input[type="range"] { width: 100%; accent-color: var(--brass); }
         `<p class="volumen">Hasta <b>${p.citas}</b> citas al mes por el asistente, mensajes de WhatsApp incluidos.</p>`;
       cont.appendChild(card);
     }
+    if (idx >= 0) {
+      const p = PAQUETES[idx];
+      $("#plan-nombre").textContent = p.nombre;
+      $("#p-anticipo").textContent = pesos(p.impl / 2);
+      $("#p-resto").textContent = pesos(p.impl / 2);
+      $("#p-mes").textContent = pesos(p.mes);
+    }
     const sel = $("#paquete-sel");
-    sel.innerHTML = PAQUETES.map((p) => `<option value="${p.id}"${p.recomendado ? " selected" : ""}>${esc(p.nombre)}: ${pesos(p.mes)} al mes</option>`).join("");
+    sel.innerHTML = lista.map((p) => `<option value="${p.id}"${p.recomendado ? " selected" : ""}>${esc(p.nombre)}: ${pesos(p.mes)} al mes</option>`).join("");
   }
 
   // ─── Página web de ejemplo ──────────────────────────────────────────
@@ -1276,6 +1316,9 @@ input[type="range"] { width: 100%; accent-color: var(--brass); }
   ["precio", "perdidas", "mensajes", "nuevos", "paquete-sel"].forEach((id) => $("#" + id).addEventListener("input", calcular));
 
   // ─── Arranque ───────────────────────────────────────────────────────
+  document.querySelectorAll("[data-solo]").forEach((el) => {
+    el.hidden = (el.dataset.solo === "plan") !== Boolean(PLAN_ACORDADO);
+  });
   pintarPaquetes();
   pintarWeb();
   calcular();
