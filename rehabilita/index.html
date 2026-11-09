@@ -197,6 +197,22 @@ h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 3.2
 .prueba button::before { content: "→ "; color: var(--azul); font-weight: 700; }
 .prueba button:hover { color: var(--azul); }
 .aviso { color: var(--muted); font-size: 13px; margin-top: 8px; min-height: 1.2em; }
+.confianza { display: flex; gap: 8px; align-items: flex-start; cursor: pointer; }
+.confianza input { margin: 4px 0 0; accent-color: var(--azul); flex-shrink: 0; }
+.evento.bot.pendiente { background: transparent; border-left-style: dashed; box-shadow: inset 0 0 0 1px var(--line); }
+
+/* Anticipo: botón de pago y pantalla de pago simulada */
+.wa-pagar { font-weight: 600; }
+.ig-adjunto { margin-top: 6px; }
+.wa-pagar:disabled, .rapida:disabled { opacity: 0.5; cursor: default; }
+.pago-caja { background: var(--surface); color: var(--fg); }
+.pago-caja .hoja-titulo button { color: var(--muted); }
+.pago-cuerpo { padding: 2px 18px 4px; text-align: center; }
+.pago-nota { font-size: 12.5px; color: var(--muted); background: var(--surface-2); border-radius: 8px; padding: 6px 10px; margin: 0 0 14px; }
+.pago-monto { font-family: var(--f-display); font-weight: 700; font-size: 34px; line-height: 1.1; }
+.pago-concepto { color: var(--muted); font-size: 13.5px; margin-top: 4px; }
+.pago-boton { margin-top: 16px; width: 100%; border: 0; border-radius: 10px; padding: 12px; background: var(--fg); color: var(--bg); font-weight: 600; cursor: pointer; }
+.pago-luego { margin-top: 6px; background: none; border: 0; color: var(--muted); cursor: pointer; font-size: 13.5px; padding: 6px; }
 
 /* ── Tu plan ── */
 .plan { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
@@ -209,6 +225,12 @@ h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 3.2
 .precios span { display: block; font-size: 12.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }
 .precios b { display: block; font-family: var(--f-display); font-weight: 700; font-size: 26px; line-height: 1.15; }
 .precios small { color: var(--muted); font-size: 13px; }
+.desglose { margin-bottom: 16px; }
+.desglose table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.desglose td { padding: 7px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+.desglose td:last-child { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; padding-left: 12px; }
+.desglose small { display: block; color: var(--muted); font-size: 12.5px; }
+.desglose tr.total td { border-bottom: 0; font-weight: 700; padding-top: 9px; }
 .caja ul, .caja ol { margin: 0; padding-left: 20px; display: grid; gap: 7px; }
 .caja p { margin: 0 0 8px; } .caja p:last-child { margin-bottom: 0; }
 .columna { display: grid; gap: 16px; }
@@ -261,6 +283,19 @@ h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 3.2
                 <div id="hoja-filas"></div>
               </div>
             </div>
+            <div class="hoja" id="pago" hidden>
+              <div class="hoja-caja pago-caja" role="dialog" aria-label="Pago del anticipo">
+                <div class="hoja-titulo"><span>Pago del anticipo</span><button type="button" id="pago-cerrar" aria-label="Cerrar">×</button></div>
+                <div class="pago-cuerpo">
+                  <p class="pago-nota">Simulación: en la vida real aquí se abre Mercado Pago para pagar con tarjeta o saldo.</p>
+                  <div class="pago-monto" id="pago-monto"></div>
+                  <div class="pago-concepto" id="pago-concepto"></div>
+                  <div class="pago-concepto" id="pago-cuando"></div>
+                  <button type="button" class="pago-boton" id="pago-ok">Simular pago aprobado</button>
+                  <button type="button" class="pago-luego" id="pago-luego">Ahorita no</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <p class="nota-demo">Demo con servicios, precios y agenda de ejemplo.</p>
@@ -269,15 +304,17 @@ h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 3.2
       <aside class="agenda" aria-label="Agenda de George y Rubio">
         <div class="eyebrow">Lo que ven George y Rubio</div>
         <h2>Su Google Calendar</h2>
-        <p class="sub">El asistente solo ofrece horarios libres y aparta la cita ahí mismo.</p>
+        <p class="sub">El asistente solo ofrece horarios libres y aparta la cita ahí mismo. Mientras el paciente paga el anticipo, el horario queda apartado.</p>
         <div class="leyenda"><span><i class="punto george"></i>George</span><span><i class="punto rubio"></i>Rubio</span></div>
         <div id="agenda"></div>
         <div class="prueba">
           <div class="eyebrow">Prueba esto</div>
           <ul>
-            <li><button type="button" data-escribe="Quiero agendar una cita">Escribe “quiero agendar una cita”</button></li>
-            <li><button type="button" data-escribe="¿Cuánto cuesta la valoración?">Pregunta cuánto cuesta la valoración</button></li>
+            <li><button type="button" data-escribe="Quiero agendar una cita">Agenda una cita: te pide el anticipo con Mercado Pago</button></li>
+            <li><button type="button" data-accion="vence">Ver qué pasa si no paga el anticipo a tiempo</button></li>
+            <li><label class="confianza"><input type="checkbox" id="confianza"> Ana es paciente de confianza: agenda sin anticipo</label></li>
             <li><button type="button" data-accion="recordatorio">Ver el recordatorio que le llega un día antes (después de agendar)</button></li>
+            <li><button type="button" data-escribe="¿Cuánto cuesta la valoración?">Pregunta cuánto cuesta la valoración</button></li>
             <li><button type="button" data-accion="instagram">Agendar por Instagram</button></li>
             <li><button type="button" data-escribe="Quiero hablar con alguien">Pedir hablar con una persona</button></li>
           </ul>
@@ -293,15 +330,29 @@ h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 3.2
     <div class="plan">
       <div class="columna">
         <div class="caja principal">
-          <h3>WhatsApp + Instagram + Google Calendar</h3>
+          <h3>Asistente de citas con anticipos</h3>
           <div class="precios">
-            <div><span>Implementación</span><b>$4,000</b><small>$2,000 al arrancar y $2,000 cuando lo veas funcionando</small></div>
+            <div><span>Implementación</span><b>$5,000</b><small>$2,500 al arrancar y $2,500 cuando lo veas funcionando</small></div>
             <div><span>Mensualidad</span><b>2 terapias</b><small>al mes, en lugar de pago en efectivo</small></div>
+          </div>
+          <div class="desglose">
+            <h4>Desglose de la implementación</h4>
+            <table>
+              <tr><td>Asistente de citas por WhatsApp<small>Agenda, servicios, ubicación, cambios y cancelaciones</small></td><td>$1,500</td></tr>
+              <tr><td>Conexión con Google Calendar<small>Los calendarios de George y de Rubio</small></td><td>$1,000</td></tr>
+              <tr><td>Instagram<small>El mismo asistente en mensajes directos</small></td><td>$1,000</td></tr>
+              <tr><td>Cobro de anticipos con Mercado Pago<small>50% para confirmar la cita; lista de pacientes de confianza</small></td><td>$1,000</td></tr>
+              <tr><td>Alta y configuración<small>WhatsApp oficial con Meta, recordatorios y pruebas</small></td><td>$500</td></tr>
+              <tr class="total"><td>Total</td><td>$5,000</td></tr>
+            </table>
           </div>
           <ul>
             <li>Agenda por WhatsApp e Instagram, las 24 horas.</li>
             <li>Conectado al Google Calendar de George y de Rubio: solo ofrece horarios libres y aparta la cita ahí.</li>
             <li>El paciente elige con quién atenderse, o “el primero libre”.</li>
+            <li>Cobra el anticipo del 50% con Mercado Pago y solo así confirma la cita. El dinero cae directo en tu cuenta.</li>
+            <li>Tus pacientes de confianza agendan sin anticipo.</li>
+            <li>Si no pagan en 30 minutos, el horario se libera solo. Si cambian la cita, el anticipo pasa a la nueva; si cancelan a tiempo, queda a su favor.</li>
             <li>Recordatorio por WhatsApp un día antes, con botones para confirmar, cambiar o cancelar.</li>
             <li>Cambiar o cancelar desde el chat, hasta 12 horas antes.</li>
             <li>“Hablar con alguien”: el asistente se calla y contestan ustedes desde su celular.</li>
@@ -320,21 +371,22 @@ h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 3.2
       </div>
       <div class="columna">
         <div class="caja">
-          <h4>Mensajes de WhatsApp</h4>
-          <p>Meta cobra los mensajes que manda el asistente directo a la tarjeta de su cuenta de negocio. Contestarle a quien escribe es gratis hasta 1,000 mensajes al mes, y cada recordatorio cuesta unos 16 centavos.</p>
+          <h4>Lo que cobran Meta y Mercado Pago</h4>
+          <p><b>WhatsApp:</b> Meta cobra los mensajes que manda el asistente directo a la tarjeta de su cuenta de negocio. Contestarle a quien escribe es gratis hasta 1,000 mensajes al mes, y cada recordatorio cuesta unos 16 centavos.</p>
           <p class="chica">Con su volumen, calculen de $0 a $200 al mes. Instagram no cobra por mensaje.</p>
+          <p><b>Mercado Pago:</b> cobra su comisión de cada anticipo. Con sus tarifas de hoy, 3.49% + $4 + IVA con el dinero al instante: unos $15 en un anticipo de $250.</p>
         </div>
         <div class="caja">
           <h4>Siguientes pasos</h4>
           <ol>
-            <li><b>Anticipo de $2,000</b> para arrancar.</li>
-            <li><b>Sus datos:</b> servicios, precios y duración; horario de cada uno; su Gmail para el calendario.</li>
-            <li><b>Videollamada de 20 minutos</b> para conectar WhatsApp, Instagram y los calendarios.</li>
+            <li><b>Anticipo de $2,500</b> para arrancar.</li>
+            <li><b>Sus datos:</b> servicios, precios y duración; horario de cada uno; su Gmail para el calendario; las reglas del anticipo y sus pacientes de confianza.</li>
+            <li><b>Videollamada de unos 30 minutos</b> para conectar WhatsApp, Instagram, los calendarios y Mercado Pago.</li>
             <li><b>Lo prueban</b> con sus propios números antes de prenderlo para pacientes.</li>
-            <li><b>Arranca:</b> segundo pago de $2,000, y desde ese mes, 2 terapias al mes.</li>
+            <li><b>Arranca:</b> segundo pago de $2,500, y desde ese mes, 2 terapias al mes.</li>
           </ol>
         </div>
-        <p class="chica">Los servicios y precios de la demo son de ejemplo: se cambian por los suyos. Propuesta del 9 de noviembre de 2026.</p>
+        <p class="chica">Los servicios y precios de la demo son de ejemplo: se cambian por los suyos. Las reglas del anticipo (cuánto, a quién no se le pide, cuánto tiempo para pagar y qué pasa si cancelan) se ajustan a como trabajes. Propuesta del 9 de noviembre de 2026.</p>
       </div>
     </div>
   </section>
@@ -364,7 +416,8 @@ h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 3.2
     { id: "sesion", nombre: "Sesión de fisioterapia", duracion: 50, precio: 500, descripcion: "Seguimiento de tu tratamiento." },
     { id: "deportiva", nombre: "Fisioterapia deportiva", duracion: 60, precio: 550, descripcion: "Lesiones y recuperación deportiva." },
   ];
-  const REGLAS = { paso: 30, anticipacion: 2, dias: 14, cancelar: 12, recordatorio: 24, porPagina: 8 };
+  const REGLAS = { paso: 30, anticipacion: 2, dias: 14, cancelar: 12, recordatorio: 24, porPagina: 8, pagar: 30 };
+  const anticipo = (s) => Math.round(s.precio * 0.5); // 50% para confirmar la cita
 
   // ─── Utilidades ───
   const $ = (s) => document.querySelector(s);
@@ -384,6 +437,7 @@ h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 3.2
   const deClaveHora = (s) => { const [f, h] = s.split("T"); const d = deClave(f); const [hh, mm] = h.split(":").map(Number); d.setHours(hh, mm, 0, 0); return d; };
   const horaTexto = (d) => `${(d.getHours() % 12) || 12}:${dos(d.getMinutes())} ${d.getHours() >= 12 ? "pm" : "am"}`;
   const diaLargo = (d) => `${DIAS_LARGOS[d.getDay()]} ${d.getDate()} de ${MESES_LARGOS[d.getMonth()]}`;
+  const aLas = (d) => (d.getHours() % 12 === 1 ? "a la " : "a las ") + horaTexto(d);
   const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
   const diaCorto = (d) => {
     const hoy = inicioDia(new Date());
@@ -415,7 +469,9 @@ h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 3.2
   })();
   const citas = [];
   let siguienteCita = 1;
-  const activas = () => citas.filter((c) => c.estado !== "cancelada");
+  // Apartan horario: las agendadas, las confirmadas y las que esperan anticipo.
+  const activas = () => citas.filter((c) => !["cancelada", "vencida"].includes(c.estado));
+  const vigentes = () => citas.filter((c) => ["agendada", "confirmada"].includes(c.estado));
 
   const libre = (pid, ini, fin) => ![...ocupado[pid], ...activas().filter((c) => c.profesional === pid)]
     .some((o) => o.inicio < fin && ini < o.fin);
@@ -438,8 +494,8 @@ h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 3.2
 
   // ─── Pacientes: uno por WhatsApp y otro por Instagram ───
   const contactos = {
-    wa: { canal: "wa", paso: "nuevo", datos: {}, nombre: null, perfil: "Ana López", telefono: "7220000000", pausa: false },
-    ig: { canal: "ig", paso: "nuevo", datos: {}, nombre: null, perfil: "", telefono: null, pausa: false },
+    wa: { canal: "wa", paso: "nuevo", datos: {}, nombre: null, perfil: "Ana López", telefono: "7220000000", pausa: false, confianza: false, saldo: 0 },
+    ig: { canal: "ig", paso: "nuevo", datos: {}, nombre: null, perfil: "", telefono: null, pausa: false, confianza: false, saldo: 0 },
   };
   let activo = "wa";
 
@@ -549,6 +605,8 @@ h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 3.2
     }
     if (paso === "dia") { const dia = interpretaDia(t); if (dia) return mostrarHoras(c, { ...d, dia: claveDia(dia) }, 0); }
     if (paso === "hora") { const v = horaEscrita(t, d); if (v) return elegirHora(c, d, v); }
+    const debe = citas.find((x) => x.contacto === c.canal && x.estado === "por_pagar");
+    if (debe && /\b(ya )?pag(ue|ado|o)\b/.test(t)) return texto(c, `En cuanto Mercado Pago me avise que entró tu pago, te confirmo aquí mismo 🙌 Si todavía no pagas, usa el botón *Pagar anticipo* de arriba (${pesos(debe.falta)}).`);
     if (paso === "nuevo") texto(c, BIENVENIDA);
     const rutas = { agendar: () => empezar(c, {}), citas: () => misCitas(c), servicios: () => servicios(c), ubicacion: () => ubicacion(c), humano: () => humano(c) };
     if (rutas[intento]) return rutas[intento]();
@@ -566,7 +624,8 @@ h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 3.2
   }
   function servicios(c) {
     guardar(c, "menu", {});
-    botones(c, "Estos son nuestros servicios:\n\n" + SERVICIOS.map((s) => `• *${s.nombre}* — ${pesos(s.precio)} · ${s.duracion} min\n  ${s.descripcion}`).join("\n"),
+    const nota = c.confianza ? "" : "\n\nPara apartar tu cita se paga un anticipo del 50% con Mercado Pago; el resto, en el consultorio.";
+    botones(c, "Estos son nuestros servicios:\n\n" + SERVICIOS.map((s) => `• *${s.nombre}* — ${pesos(s.precio)} · ${s.duracion} min\n  ${s.descripcion}`).join("\n") + nota,
       [["m:agendar", "Agendar cita"], ["menu", "Menú"]]);
   }
   function ubicacion(c) {
@@ -658,8 +717,18 @@ h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 3.2
     if (!d.nombre || (c.canal === "ig" && !d.telefono)) return siguienteDato(c, d);
     guardar(c, "confirmar", d);
     const whatsapp = c.canal === "ig" ? `\n📱 Recordatorio por WhatsApp al ${telefonoTexto(d.telefono)}` : "";
-    botones(c, `${d.reemplaza ? "Así quedaría tu cita nueva (la anterior se cancela al confirmar):" : "Confirma tu cita:"}\n\n${detalle(s, p, deClaveHora(d.inicio), d.nombre)}${whatsapp}\n\n_Si es para otra persona, escríbeme su nombre._`,
+    const { total, falta } = cuentas(c, s, d);
+    const pago = falta ? `\n💳 Anticipo para confirmar: ${pesos(falta)}` : total ? "\n💳 Anticipo: ya cubierto ✓" : "";
+    botones(c, `${d.reemplaza ? "Así quedaría tu cita nueva (la anterior se cancela al confirmar):" : "Confirma tu cita:"}\n\n${detalle(s, p, deClaveHora(d.inicio), d.nombre)}${whatsapp}${pago}\n\n_Si es para otra persona, escríbeme su nombre._`,
       [["c:si", "Confirmar"], ["c:otra", "Otra hora"], ["c:no", "Cancelar"]]);
+  }
+  // El anticipo: los de confianza no pagan; al cambiar de cita el anticipo pasa a la nueva, y el saldo a favor se usa.
+  function cuentas(c, s, d) {
+    const total = c.confianza ? 0 : anticipo(s);
+    const vieja = d.reemplaza ? citaPropia(c, String(d.reemplaza)) : null;
+    const heredado = Math.min(vieja ? vieja.pagado : 0, total);
+    const deSaldo = Math.min(c.saldo, total - heredado);
+    return { total, vieja, heredado, deSaldo, falta: total - heredado - deSaldo };
   }
   function reservar(c, d) {
     const s = servicio(d.servicio); const p = profesional(d.con || "");
@@ -667,17 +736,33 @@ h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 3.2
     const ini = deClaveHora(d.inicio);
     if (!sigueLibre(p, s, ini)) { texto(c, "Uy, ese horario se acaba de ocupar 😕 Elige otro:"); return mostrarHoras(c, d, 0); }
     const telefono = c.canal === "ig" ? d.telefono : c.telefono;
+    const { total, vieja, heredado, deSaldo, falta } = cuentas(c, s, d);
     const cita = { id: siguienteCita++, contacto: c.canal, nombre: d.nombre, telefono, profesional: p.id, servicio: s.id,
-      inicio: ini, fin: new Date(+ini + s.duracion * MIN), estado: "agendada", nueva: true,
+      inicio: ini, fin: new Date(+ini + s.duracion * MIN), estado: falta ? "por_pagar" : "agendada", nueva: true,
+      anticipo: total, pagado: heredado + deSaldo, falta,
       recordatorio: +ini - Date.now() > REGLAS.recordatorio * 60 * MIN ? "pendiente" : "no_aplica" };
     citas.push(cita);
+    c.saldo -= deSaldo;
     if (!c.nombre) c.nombre = d.nombre;
     let cambio = "";
-    if (d.reemplaza) { const vieja = citaPropia(c, String(d.reemplaza)); if (vieja) { vieja.estado = "cancelada"; cambio = "Cambié tu cita. "; } }
+    if (vieja) {
+      vieja.estado = "cancelada"; vieja.movida = true;
+      c.saldo += vieja.pagado - heredado;
+      cambio = heredado ? "Cambié tu cita y tu anticipo pasó a la nueva. " : "Cambié tu cita. ";
+    }
     guardar(c, "menu", {});
-    const por = c.canal === "ig" ? ` por WhatsApp al ${telefonoTexto(telefono)}` : "";
+    if (falta) {
+      const usado = heredado + deSaldo ? `Usé ${pesos(heredado + deSaldo)} que tenías a favor. ` : "";
+      return decir(c, { tipo: "pago", cita: cita.id, cuerpo: `${cambio}${usado}Para confirmar tu cita, paga el anticipo de *${pesos(falta)}* con Mercado Pago.\n\n${resumen(cita)}\n\nTe aparto el horario ${REGLAS.pagar} minutos. El resto (${pesos(s.precio - total)}) lo pagas en el consultorio.` });
+    }
+    citaLista(c, cita, cambio + (deSaldo ? `Usé tu anticipo a favor de ${pesos(deSaldo)}, así que no pagas nada más. ` : ""));
+  }
+  function citaLista(c, cita, extra) {
+    const s = servicio(cita.servicio); const p = profesional(cita.profesional);
+    const por = cita.contacto === "ig" ? ` por WhatsApp al ${telefonoTexto(cita.telefono)}` : "";
     const aviso = cita.recordatorio === "pendiente" ? `${REGLAS.recordatorio} horas antes te mando un recordatorio${por}. ` : "";
-    botones(c, `✅ ¡Listo, ${primerNombre(d.nombre)}! ${cambio}Tu cita quedó agendada:\n\n${detalle(s, p, ini, d.nombre)}\n📍 ${DIRECCION}\n\n${aviso}Si necesitas cambiarla o cancelarla, escribe *mis citas*.`,
+    const pago = cita.pagado ? `\n💳 Anticipo pagado: ${pesos(cita.pagado)} · en el consultorio pagas ${pesos(s.precio - cita.pagado)}` : "";
+    botones(c, `✅ ¡Listo, ${primerNombre(cita.nombre)}! ${extra}Tu cita quedó agendada:\n\n${detalle(s, p, cita.inicio, cita.nombre)}${pago}\n📍 ${DIRECCION}\n\n${aviso}Si necesitas cambiarla o cancelarla, escribe *mis citas*.`,
       [["m:citas", "Mis citas"], ["menu", "Menú"]]);
   }
 
@@ -685,14 +770,14 @@ h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 3.2
   const esDe = (cita, c) => cita.contacto === c.canal || (c.canal === "wa" && !!cita.telefono && cita.telefono === c.telefono);
   function citaPropia(c, valor) {
     const cita = citas.find((x) => String(x.id) === valor);
-    return cita && esDe(cita, c) && cita.estado !== "cancelada" && cita.fin > new Date() ? cita : null;
+    return cita && esDe(cita, c) && ["agendada", "confirmada"].includes(cita.estado) && cita.fin > new Date() ? cita : null;
   }
   const resumen = (cita) => `🩺 ${servicio(cita.servicio).nombre}\n👤 Con ${profesional(cita.profesional).nombre}\n📅 ${cap(diaLargo(cita.inicio))}, ${horaTexto(cita.inicio)}`;
   const aTiempo = (cita) => +cita.inicio - Date.now() >= REGLAS.cancelar * 60 * MIN;
   const fueraDeTiempo = (c, accion) => botones(c, `Tu cita es en menos de ${REGLAS.cancelar} horas, así que para ${accion}la escríbele directo al equipo.`, [["m:humano", "Hablar con alguien"], ["menu", "Menú"]]);
   function misCitas(c) {
     guardar(c, "menu", {});
-    const mias = activas().filter((x) => esDe(x, c) && x.fin > new Date()).sort((a, b) => a.inicio - b.inicio);
+    const mias = vigentes().filter((x) => esDe(x, c) && x.fin > new Date()).sort((a, b) => a.inicio - b.inicio);
     if (!mias.length) return botones(c, "No tienes citas agendadas.", [["m:agendar", "Agendar cita"], ["menu", "Menú"]]);
     if (mias.length === 1) return verCita(c, mias[0]);
     lista(c, "Estas son tus próximas citas. ¿Cuál quieres ver?", "Ver citas",
@@ -706,7 +791,9 @@ h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 3.2
   function cancelar(c, cita) {
     if (!aTiempo(cita)) return fueraDeTiempo(c, "cancelar");
     cita.estado = "cancelada"; guardar(c, "menu", {});
-    botones(c, "Listo, cancelé tu cita. ¿Quieres agendar otra?", [["m:agendar", "Agendar cita"], ["menu", "Menú"]]);
+    c.saldo += cita.pagado;
+    const favor = cita.pagado ? ` Tu anticipo de ${pesos(cita.pagado)} queda a tu favor para tu siguiente cita.` : "";
+    botones(c, `Listo, cancelé tu cita.${favor} ¿Quieres agendar otra?`, [["m:agendar", "Agendar cita"], ["menu", "Menú"]]);
   }
   function cambiar(c, cita) {
     if (!aTiempo(cita)) return fueraDeTiempo(c, "cambiar");
@@ -714,7 +801,7 @@ h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 3.2
   }
   function confirmarAsistencia(c, cita) {
     cita.estado = "confirmada"; guardar(c, "menu", {});
-    texto(c, `¡Gracias por confirmar, ${primerNombre(cita.nombre)}! Te esperamos el ${diaLargo(cita.inicio)} a las ${horaTexto(cita.inicio)} 💪`);
+    texto(c, `¡Gracias por confirmar, ${primerNombre(cita.nombre)}! Te esperamos el ${diaLargo(cita.inicio)} ${aLas(cita.inicio)} 💪`);
   }
 
   // ─── Pintar ───
@@ -722,7 +809,7 @@ h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 3.2
   const horaAhora = () => horaTexto(new Date());
   function pintarUsuario(canal, cuerpo) {
     quitarRapidas(canal);
-    chats[canal].querySelectorAll(".wa-boton, .wa-lista").forEach((b) => (b.disabled = true));
+    chats[canal].querySelectorAll(".wa-boton:not(.wa-pagar), .wa-lista").forEach((b) => (b.disabled = true));
     const fila = document.createElement("div"); fila.className = "fila out";
     fila.innerHTML = `<div class="msg out">${esc(cuerpo)}<span class="hora">${horaAhora()}</span></div>`;
     chats[canal].appendChild(fila); bajar(canal);
@@ -736,7 +823,13 @@ h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 3.2
     const ops = m.tipo === "botones" || m.tipo === "plantilla" ? m.ops : m.tipo === "lista" ? m.filas.map(([i, t]) => [i, t]) : [];
     if (canal === "ig" && m.tipo === "lista") cuerpo += "\n\n" + m.filas.map(([, t, dsc]) => `• ${t}${dsc ? ` (${dsc})` : ""}`).join("\n");
     fila.innerHTML = `<div class="msg in">${formato(cuerpo)}<span class="hora">${horaAhora()}</span></div>`;
-    if (canal === "wa" && m.tipo === "lista") {
+    if (m.tipo === "pago") {
+      // En WhatsApp es un botón con link (CTA); en Instagram, un botón de link. Sigue sirviendo aunque el paciente escriba otra cosa.
+      const b = document.createElement("div"); b.className = canal === "wa" ? "wa-adjuntos" : "ig-adjunto";
+      const bt = document.createElement("button"); bt.type = "button"; bt.className = canal === "wa" ? "wa-boton wa-pagar" : "rapida ig-pagar";
+      bt.dataset.pagar = m.cita; bt.textContent = "↗ Pagar anticipo";
+      bt.addEventListener("click", () => abrirPago(m.cita)); b.appendChild(bt); fila.appendChild(b);
+    } else if (canal === "wa" && m.tipo === "lista") {
       const b = document.createElement("div"); b.className = "wa-adjuntos";
       b.innerHTML = `<button type="button" class="wa-boton wa-lista">☰ ${esc(m.boton)}</button>`;
       b.firstChild.addEventListener("click", () => abrirHoja(m)); fila.appendChild(b);
@@ -806,7 +899,7 @@ h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 3.2
       ].sort((a, b) => a.inicio - b.inicio || a.profesional.localeCompare(b.profesional));
       if (!eventos.length) continue;
       const bloque = document.createElement("div"); bloque.className = "dia";
-      const delBotActivas = delBot.filter((c) => c.estado !== "cancelada").length;
+      const delBotActivas = delBot.filter((c) => !["cancelada", "vencida"].includes(c.estado)).length;
       bloque.innerHTML = `<div class="dia-titulo">${esc(cap(diaLargo(dia)))} <span>${delBotActivas ? `${delBotActivas} por el asistente` : ""}</span></div>`;
       for (const ev of eventos) {
         const fila = document.createElement("div");
@@ -815,9 +908,14 @@ h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 3.2
           fila.className = `evento ocupado ${ev.profesional}`;
           fila.innerHTML = `<span class="h">${horaTexto(ev.inicio)}</span><span class="d">Paciente · ${esc(nombreP)}</span>`;
         } else {
-          fila.className = `evento bot ${ev.profesional}${ev.estado === "cancelada" ? " cancelada" : ""}${ev.nueva ? " nuevo" : ""}`;
+          const cerrada = ["cancelada", "vencida"].includes(ev.estado);
+          fila.className = `evento bot ${ev.profesional}${cerrada ? " cancelada" : ""}${ev.estado === "por_pagar" ? " pendiente" : ""}${ev.nueva ? " nuevo" : ""}`;
           const canal = ev.contacto === "ig" ? "Instagram" : "WhatsApp";
-          const estado = ev.estado === "cancelada" ? "cancelada" : ev.estado === "confirmada" ? "confirmó asistencia ✓" : `agendada por ${canal}`;
+          const pago = ev.anticipo ? `anticipo ${pesos(ev.pagado)} ✓` : "sin anticipo (de confianza)";
+          const estado = ev.estado === "cancelada" ? (ev.movida ? "se cambió de horario" : ev.pagado ? "cancelada · anticipo a su favor" : "cancelada")
+            : ev.estado === "vencida" ? "no pagó a tiempo · horario liberado"
+            : ev.estado === "por_pagar" ? `⏳ apartada, esperando anticipo de ${pesos(ev.falta)}`
+            : ev.estado === "confirmada" ? `confirmó asistencia ✓ · ${pago}` : `agendada por ${canal} · ${pago}`;
           fila.innerHTML = `<span class="h">${horaTexto(ev.inicio)}–${horaTexto(ev.fin)}</span><span class="d">${esc(servicio(ev.servicio).nombre)}: ${esc(ev.nombre)}<small>Con ${esc(nombreP)} · ${estado}</small></span>`;
           ev.nueva = false;
           const original = citas.find((c) => c.id === ev.id); if (original) original.nueva = false;
@@ -830,17 +928,63 @@ h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 3.2
 
   // ─── Recordatorio (sale por WhatsApp, aunque se haya agendado por Instagram) ───
   async function verRecordatorio() {
-    const cita = activas().filter((c) => c.fin > new Date()).sort((a, b) => b.id - a.id)[0];
-    if (!cita) { $("#aviso").textContent = "Primero agenda una cita, y luego toca aquí para ver el recordatorio."; return; }
+    const cita = vigentes().filter((c) => c.fin > new Date()).sort((a, b) => b.id - a.id)[0];
+    if (!cita) { $("#aviso").textContent = "Primero agenda una cita (y paga el anticipo, o márcala como de confianza); luego toca aquí para ver el recordatorio."; return; }
     $("#aviso").textContent = "";
     if (ocupadoPintando) return;
     cambiarCanal("wa");
     chip("wa", "Un día antes de la cita, le llega esto por WhatsApp ↓");
-    cola.push({ canal: "wa", tipo: "plantilla", cuerpo: `Hola ${primerNombre(cita.nombre)}, te recordamos tu cita el ${diaLargo(cita.inicio)} a las ${horaTexto(cita.inicio)} con ${profesional(cita.profesional).nombre}. ¿Nos confirmas?`,
+    cola.push({ canal: "wa", tipo: "plantilla", cuerpo: `Hola ${primerNombre(cita.nombre)}, te recordamos tu cita el ${diaLargo(cita.inicio)} ${aLas(cita.inicio)} con ${profesional(cita.profesional).nombre}. ¿Nos confirmas?`,
       ops: [[`CONFIRMAR:${cita.id}`, "Confirmar"], [`CAMBIAR:${cita.id}`, "Cambiar"], [`CANCELAR:${cita.id}`, "Cancelar"]] });
     contactos.wa.paso = "menu";
     await vaciarCola();
   }
+
+  // ─── Anticipo con Mercado Pago (simulado) ───
+  const cerrarPago = () => { $("#pago").hidden = true; };
+  const desactivarPago = (id) => document.querySelectorAll(`[data-pagar="${id}"]`).forEach((b) => (b.disabled = true));
+  function abrirPago(id) {
+    const cita = citas.find((x) => x.id === Number(id));
+    if (!cita || cita.estado !== "por_pagar" || ocupadoPintando) return;
+    $("#pago-monto").textContent = pesos(cita.falta);
+    $("#pago-concepto").textContent = `Anticipo · ${servicio(cita.servicio).nombre} con ${profesional(cita.profesional).nombre}`;
+    $("#pago-cuando").textContent = `${cap(diaLargo(cita.inicio))}, ${horaTexto(cita.inicio)} · Re Habilita`;
+    $("#pago-ok").onclick = () => pagar(cita);
+    $("#pago").hidden = false;
+  }
+  async function pagar(cita) {
+    cerrarPago();
+    if (ocupadoPintando || cita.estado !== "por_pagar") return;
+    const c = contactos[cita.contacto];
+    cita.estado = "agendada"; cita.pagado += cita.falta; cita.nueva = true;
+    desactivarPago(cita.id);
+    chip(c.canal, "Mercado Pago le avisa al asistente que entró el pago ↓");
+    citaLista(c, cita, `Recibimos tu anticipo de ${pesos(cita.falta)}. `);
+    await vaciarCola();
+  }
+  async function vencer() {
+    const cita = citas.filter((x) => x.estado === "por_pagar").sort((a, b) => b.id - a.id)[0];
+    if (!cita) { $("#aviso").textContent = "Primero agenda una cita sin pagar el anticipo, y luego toca aquí."; return; }
+    if (ocupadoPintando) return;
+    $("#aviso").textContent = "";
+    const c = contactos[cita.contacto];
+    if (activo !== c.canal) await cambiarCanal(c.canal);
+    cita.estado = "vencida"; cita.nueva = true;
+    c.saldo += cita.pagado; // lo que ya tenía a favor, se le respeta
+    desactivarPago(cita.id); guardar(c, "menu", {});
+    chip(c.canal, `Pasaron ${REGLAS.pagar} minutos sin pago ↓`);
+    botones(c, `Se venció el tiempo para pagar el anticipo y liberé el horario del ${diaLargo(cita.inicio)} ${aLas(cita.inicio)} 😕\n\nSi todavía lo quieres, agéndalo otra vez.`, [["m:agendar", "Agendar cita"], ["menu", "Menú"]]);
+    await vaciarCola();
+  }
+  $("#pago-cerrar").addEventListener("click", cerrarPago);
+  $("#pago-luego").addEventListener("click", cerrarPago);
+  $("#pago").addEventListener("click", (e) => { if (e.target.id === "pago") cerrarPago(); });
+  document.querySelector('[data-accion="vence"]').addEventListener("click", vencer);
+  $("#confianza").addEventListener("change", (e) => {
+    contactos.wa.confianza = e.target.checked;
+    $("#aviso").textContent = e.target.checked ? "Ana ya está en la lista de confianza de George: agenda por WhatsApp sin anticipo."
+      : "Ana ya no está en la lista de confianza: se le pide anticipo.";
+  });
 
   // ─── Canal activo ───
   const arrancados = { wa: false, ig: false };
@@ -851,7 +995,7 @@ h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 3.2
     $("#c-wa").setAttribute("aria-pressed", String(canal === "wa")); $("#c-ig").setAttribute("aria-pressed", String(canal === "ig"));
     $("#estado").textContent = canal === "wa" ? "en línea" : "Activo ahora";
     $("#entrada").placeholder = canal === "wa" ? "Escribe un mensaje" : "Envía un mensaje…";
-    cerrarHoja();
+    cerrarHoja(); cerrarPago();
     if (!arrancados[canal]) {
       arrancados[canal] = true;
       pintarUsuario(canal, "Hola"); atender(contactos[canal], { texto: "Hola" }); await vaciarCola(true);
