@@ -1,0 +1,883 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<style>html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Asistente Re Habilita</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Consultorio de fisioterapia: el teléfono del paciente a la izquierda, la agenda de los dos
+   fisioterapeutas a la derecha. Los colores salen de la cinta kinesiológica: azul para George,
+   rosa para Rubio. */
+:root {
+  --bg: #f5f3ee;
+  --surface: #ffffff;
+  --surface-2: #eeebe4;
+  --line: #ddd7cb;
+  --fg: #1d2629;
+  --muted: #5d696c;
+  --azul: #2563a8;
+  --azul-suave: rgba(37, 99, 168, 0.12);
+  --rosa: #cf3f6e;
+  --rosa-suave: rgba(207, 63, 110, 0.12);
+  --tinta-boton: #ffffff;
+  --ok: #2f7a50;
+  --bad: #b83a3a;
+
+  --wa-fondo: #efeae2;
+  --wa-barra: #ffffff;
+  --wa-in: #ffffff;
+  --wa-out: #d9fdd3;
+  --wa-texto: #111b21;
+  --wa-sub: #667781;
+  --wa-link: #027eb5;
+  --wa-verde: #00a884;
+  --wa-chip: #ffffffcc;
+  --wa-entrada: #ffffff;
+  --ig-fondo: #ffffff;
+  --ig-in: #efefef;
+  --ig-out: #3797f0;
+  --ig-texto: #000000;
+  --ig-sub: #737373;
+  --ig-borde: #dbdbdb;
+
+  --f-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --f-body: "Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #121617; --surface: #1b2123; --surface-2: #232b2e; --line: #354044; --fg: #e8ecec; --muted: #9aa6a9;
+  --azul: #6ea8e8; --azul-suave: rgba(110, 168, 232, 0.16); --rosa: #ef7fa2; --rosa-suave: rgba(239, 127, 162, 0.16);
+  --tinta-boton: #0e1418; --ok: #6cc28f; --bad: #e98181;
+  --wa-fondo: #0b141a; --wa-barra: #202c33; --wa-in: #202c33; --wa-out: #005c4b; --wa-texto: #e9edef; --wa-sub: #8696a0;
+  --wa-link: #53bdeb; --wa-verde: #00a884; --wa-chip: #182229; --wa-entrada: #2a3942;
+  --ig-fondo: #000000; --ig-in: #262626; --ig-out: #3797f0; --ig-texto: #f5f5f5; --ig-sub: #a8a8a8; --ig-borde: #363636;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #121617; --surface: #1b2123; --surface-2: #232b2e; --line: #354044; --fg: #e8ecec; --muted: #9aa6a9;
+  --azul: #6ea8e8; --azul-suave: rgba(110, 168, 232, 0.16); --rosa: #ef7fa2; --rosa-suave: rgba(239, 127, 162, 0.16);
+  --tinta-boton: #0e1418; --ok: #6cc28f; --bad: #e98181;
+  --wa-fondo: #0b141a; --wa-barra: #202c33; --wa-in: #202c33; --wa-out: #005c4b; --wa-texto: #e9edef; --wa-sub: #8696a0;
+  --wa-link: #53bdeb; --wa-verde: #00a884; --wa-chip: #182229; --wa-entrada: #2a3942;
+  --ig-fondo: #000000; --ig-in: #262626; --ig-out: #3797f0; --ig-texto: #f5f5f5; --ig-sub: #a8a8a8; --ig-borde: #363636;
+  color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 15px; line-height: 1.5; margin: 0; }
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--azul); outline-offset: 2px; }
+.wrap { max-width: 1100px; margin: 0 auto; padding-inline: 16px; padding-block: 20px 56px; }
+
+/* Encabezado: dos tiras de cinta cruzadas */
+.cabecera { display: flex; align-items: center; gap: 14px; }
+.cinta { width: 44px; height: 44px; position: relative; flex-shrink: 0; }
+.cinta i { position: absolute; left: 4px; right: 4px; top: 50%; height: 11px; border-radius: 3px; margin-top: -5.5px; }
+.cinta i:first-child { background: var(--azul); transform: rotate(-35deg); }
+.cinta i:last-child { background: var(--rosa); transform: rotate(35deg); opacity: 0.92; }
+.marca { min-width: 0; }
+.marca h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(24px, 4vw, 32px); line-height: 1.05; margin: 0; letter-spacing: -0.3px; }
+.marca p { margin: 3px 0 0; color: var(--muted); font-size: 14px; }
+
+.pestanas { display: flex; gap: 4px; margin: 22px 0; padding: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; max-width: 420px; }
+.pestanas button { flex: 1; border: 0; background: transparent; cursor: pointer; padding: 9px 14px; border-radius: 9px; font-weight: 600; color: var(--muted); }
+.pestanas button[aria-selected="true"] { background: var(--fg); color: var(--bg); }
+
+.eyebrow { font-size: 12.5px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--azul); }
+h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(22px, 3.2vw, 28px); margin: 4px 0 10px; line-height: 1.15; text-wrap: balance; }
+
+/* ── Demo ── */
+.demo { display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); gap: 28px; align-items: start; }
+@media (max-width: 860px) { .demo { grid-template-columns: minmax(0, 1fr); } .columna-telefono { max-width: 420px; width: 100%; margin: 0 auto; } }
+
+.canales { display: flex; gap: 6px; margin-bottom: 12px; }
+.canales button { flex: 1; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 7px 12px; cursor: pointer; font-weight: 600; font-size: 14px; color: var(--muted); }
+.canales button[aria-pressed="true"] { border-color: var(--fg); color: var(--fg); box-shadow: inset 0 0 0 1px var(--fg); }
+
+.telefono { background: var(--surface-2); border: 1px solid var(--line); border-radius: 36px; padding: 11px; box-shadow: 0 24px 50px rgba(20, 30, 32, 0.18); }
+.pantalla { position: relative; border-radius: 26px; overflow: hidden; }
+.barra { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid transparent; }
+.barra .avatar { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--azul), var(--rosa)); color: #ffffff; font-family: var(--f-display); font-weight: 700; font-size: 15px; }
+.barra .quien { min-width: 0; }
+.barra .nombre { font-weight: 600; font-size: 15px; line-height: 1.2; }
+.barra .estado { font-size: 12px; }
+.chat { height: 470px; overflow-y: auto; padding: 14px 10px; display: flex; flex-direction: column; gap: 6px; scroll-behavior: smooth; }
+.chat[hidden] { display: none; }
+.fila { display: flex; flex-direction: column; align-items: flex-start; max-width: 86%; }
+.fila.out { align-self: flex-end; align-items: flex-end; }
+.msg { padding: 7px 10px 6px; border-radius: 10px; font-size: 14px; line-height: 1.45; overflow-wrap: anywhere; animation: entra 0.22s ease; }
+.hora { display: block; text-align: right; font-size: 11px; margin-top: 2px; }
+@keyframes entra { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+.chip { align-self: center; font-size: 12px; padding: 4px 10px; border-radius: 8px; margin: 6px 0; text-align: center; max-width: 92%; }
+.escribiendo { align-self: flex-start; border-radius: 10px; padding: 10px 14px; }
+.escribiendo span { display: inline-block; width: 6px; height: 6px; margin: 0 2px; border-radius: 50%; animation: brinca 1.1s infinite; }
+.escribiendo span:nth-child(2) { animation-delay: 0.15s; } .escribiendo span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes brinca { 0%, 60%, 100% { transform: none; } 30% { transform: translateY(-5px); } }
+.entrada { display: flex; gap: 8px; padding: 9px 10px; align-items: center; }
+.entrada input { flex: 1; min-width: 0; border: 0; border-radius: 20px; outline: none; padding: 9px 14px; font-size: 14px; }
+.enviar { width: 40px; height: 40px; border-radius: 50%; border: 0; cursor: pointer; display: grid; place-items: center; flex-shrink: 0; }
+.enviar svg { width: 18px; height: 18px; fill: #ffffff; }
+
+/* WhatsApp */
+.wa .barra { background: var(--wa-barra); color: var(--wa-texto); }
+.wa .barra .estado { color: var(--wa-sub); }
+.wa .chat { background: var(--wa-fondo); }
+.wa .msg.in { background: var(--wa-in); color: var(--wa-texto); border-top-left-radius: 3px; box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13); }
+.wa .msg.out { background: var(--wa-out); color: var(--wa-texto); border-top-right-radius: 3px; box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13); }
+.wa .hora { color: var(--wa-sub); }
+.wa .out .hora::after { content: " ✓✓"; color: var(--wa-link); }
+.wa .chip { background: var(--wa-chip); color: var(--wa-sub); }
+.wa .escribiendo { background: var(--wa-in); }
+.wa .escribiendo span { background: var(--wa-sub); }
+.wa .entrada { background: var(--wa-barra); }
+.wa .entrada input { background: var(--wa-entrada); color: var(--wa-texto); }
+.wa .entrada input::placeholder { color: var(--wa-sub); }
+.wa .enviar { background: var(--wa-verde); }
+.wa-adjuntos { display: flex; flex-direction: column; gap: 2px; margin-top: 2px; width: 100%; min-width: 220px; }
+.wa-boton { background: var(--wa-in); color: var(--wa-link); border: 0; border-radius: 8px; padding: 8px 10px; cursor: pointer; font-weight: 500; font-size: 14px; box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13); }
+.wa-boton:disabled { opacity: 0.55; cursor: default; }
+.wa-boton:not(:disabled):hover { filter: brightness(0.97); }
+.hoja { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.35); display: flex; align-items: flex-end; z-index: 3; }
+.hoja[hidden] { display: none; }
+.hoja-caja { background: var(--wa-in); color: var(--wa-texto); width: 100%; border-radius: 16px 16px 0 0; padding: 10px 0 14px; max-height: 78%; overflow-y: auto; }
+.hoja-titulo { display: flex; justify-content: space-between; align-items: center; padding: 4px 16px 10px; font-weight: 600; }
+.hoja-titulo button { background: none; border: 0; cursor: pointer; font-size: 20px; color: var(--wa-sub); line-height: 1; }
+.hoja-fila { display: block; width: 100%; text-align: left; background: none; border: 0; border-top: 1px solid rgba(134, 150, 160, 0.25); padding: 10px 16px; cursor: pointer; color: var(--wa-texto); }
+.hoja-fila:hover { background: rgba(134, 150, 160, 0.12); }
+.hoja-fila b { display: block; font-weight: 500; }
+.hoja-fila small { color: var(--wa-sub); font-size: 13px; }
+
+/* Instagram */
+.ig .barra { background: var(--ig-fondo); color: var(--ig-texto); border-bottom-color: var(--ig-borde); }
+.ig .barra .estado { color: var(--ig-sub); }
+.ig .chat { background: var(--ig-fondo); }
+.ig .msg { border-radius: 18px; padding: 8px 12px; }
+.ig .msg.in { background: var(--ig-in); color: var(--ig-texto); }
+.ig .msg.out { background: var(--ig-out); color: #ffffff; }
+.ig .hora { display: none; }
+.ig .chip { color: var(--ig-sub); }
+.ig .escribiendo { background: var(--ig-in); border-radius: 18px; }
+.ig .escribiendo span { background: var(--ig-sub); }
+.ig .entrada { background: var(--ig-fondo); border-top: 1px solid var(--ig-borde); }
+.ig .entrada input { background: transparent; color: var(--ig-texto); border: 1px solid var(--ig-borde); }
+.ig .entrada input::placeholder { color: var(--ig-sub); }
+.ig .enviar { background: var(--ig-out); }
+.rapidas { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.rapida { background: transparent; border: 1px solid var(--ig-out); color: var(--ig-out); border-radius: 999px; padding: 5px 12px; font-size: 13px; cursor: pointer; font-weight: 600; }
+.nota-demo { text-align: center; color: var(--muted); font-size: 12.5px; margin: 10px 0 0; }
+
+/* Agenda de los fisioterapeutas */
+.agenda { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 20px; min-width: 0; }
+.agenda h2 { margin-bottom: 4px; }
+.agenda .sub { color: var(--muted); font-size: 14px; margin: 0 0 12px; }
+.leyenda { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13.5px; color: var(--muted); margin-bottom: 8px; }
+.leyenda span { display: inline-flex; align-items: center; gap: 6px; }
+.punto { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.punto.george { background: var(--azul); } .punto.rubio { background: var(--rosa); }
+.dia { margin-top: 14px; }
+.dia-titulo { display: flex; justify-content: space-between; align-items: baseline; font-weight: 600; font-size: 14px; border-bottom: 1px dashed var(--line); padding-bottom: 5px; margin-bottom: 6px; }
+.dia-titulo span { color: var(--muted); font-weight: 500; font-size: 13px; }
+.evento { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 10px; align-items: center; padding: 6px 8px 6px 10px; border-radius: 8px; border-left: 4px solid var(--line); margin-bottom: 4px; font-size: 14px; background: var(--surface-2); }
+.evento.george { border-left-color: var(--azul); }
+.evento.rubio { border-left-color: var(--rosa); }
+.evento.bot.george { background: var(--azul-suave); }
+.evento.bot.rubio { background: var(--rosa-suave); }
+.evento.nuevo { animation: entra 0.4s ease; }
+.evento .h { font-variant-numeric: tabular-nums; font-weight: 600; font-size: 13px; }
+.evento .d { min-width: 0; }
+.evento .d small { display: block; color: var(--muted); font-size: 12.5px; }
+.evento.ocupado .d { color: var(--muted); }
+.evento.cancelada .d, .evento.cancelada .h { text-decoration: line-through; color: var(--muted); }
+.prueba { margin-top: 20px; border-top: 1px solid var(--line); padding-top: 14px; }
+.prueba ul { margin: 6px 0 0; padding: 0; list-style: none; display: grid; gap: 7px; }
+.prueba button { background: none; border: 0; padding: 0; cursor: pointer; text-align: left; color: var(--fg); }
+.prueba button::before { content: "→ "; color: var(--azul); font-weight: 700; }
+.prueba button:hover { color: var(--azul); }
+.aviso { color: var(--muted); font-size: 13px; margin-top: 8px; min-height: 1.2em; }
+
+/* ── Tu plan ── */
+.plan { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 860px) { .plan { grid-template-columns: minmax(0, 1fr); } }
+.caja { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 20px; min-width: 0; }
+.caja.principal { border: 2px solid var(--fg); }
+.caja h3 { font-family: var(--f-display); font-weight: 700; font-size: 22px; margin: 0 0 12px; }
+.caja h4 { margin: 0 0 10px; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: var(--azul); }
+.precios { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border-block: 1px solid var(--line); padding-block: 14px; margin-bottom: 14px; }
+.precios span { display: block; font-size: 12.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }
+.precios b { display: block; font-family: var(--f-display); font-weight: 700; font-size: 26px; line-height: 1.15; }
+.precios small { color: var(--muted); font-size: 13px; }
+.caja ul, .caja ol { margin: 0; padding-left: 20px; display: grid; gap: 7px; }
+.caja p { margin: 0 0 8px; } .caja p:last-child { margin-bottom: 0; }
+.columna { display: grid; gap: 16px; }
+.chica { color: var(--muted); font-size: 13px; }
+.pie { margin-top: 32px; text-align: center; color: var(--muted); font-size: 12.5px; }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="cabecera">
+    <div class="cinta" aria-hidden="true"><i></i><i></i></div>
+    <div class="marca">
+      <h1>Re Habilita</h1>
+      <p>Asistente de citas por WhatsApp e Instagram</p>
+    </div>
+  </header>
+
+  <nav class="pestanas" role="tablist" aria-label="Secciones">
+    <button role="tab" id="t-demo" aria-controls="demo" aria-selected="true" data-tab="demo">Pruébalo</button>
+    <button role="tab" id="t-plan" aria-controls="plan" aria-selected="false" data-tab="plan">Tu plan</button>
+  </nav>
+
+  <section id="demo" role="tabpanel" aria-labelledby="t-demo">
+    <div class="demo">
+      <div class="columna-telefono">
+        <div class="canales" role="group" aria-label="Canal">
+          <button type="button" id="c-wa" aria-pressed="true" data-canal="wa">WhatsApp</button>
+          <button type="button" id="c-ig" aria-pressed="false" data-canal="ig">Instagram</button>
+        </div>
+        <div class="telefono">
+          <div class="pantalla wa" id="pantalla">
+            <div class="barra">
+              <div class="avatar">RH</div>
+              <div class="quien">
+                <div class="nombre">Re Habilita</div>
+                <div class="estado" id="estado">en línea</div>
+              </div>
+            </div>
+            <div class="chat" id="chat-wa" aria-live="polite"></div>
+            <div class="chat" id="chat-ig" aria-live="polite" hidden></div>
+            <form class="entrada" id="formulario">
+              <input id="entrada" type="text" placeholder="Escribe un mensaje" autocomplete="off" aria-label="Mensaje">
+              <button class="enviar" type="submit" aria-label="Enviar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+            </form>
+            <div class="hoja" id="hoja" hidden>
+              <div class="hoja-caja">
+                <div class="hoja-titulo"><span id="hoja-titulo">Opciones</span><button type="button" id="hoja-cerrar" aria-label="Cerrar">×</button></div>
+                <div id="hoja-filas"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="nota-demo">Demo con servicios, precios y agenda de ejemplo.</p>
+      </div>
+
+      <aside class="agenda" aria-label="Agenda de George y Rubio">
+        <div class="eyebrow">Lo que ven George y Rubio</div>
+        <h2>Su Google Calendar</h2>
+        <p class="sub">El asistente solo ofrece horarios libres y aparta la cita ahí mismo.</p>
+        <div class="leyenda"><span><i class="punto george"></i>George</span><span><i class="punto rubio"></i>Rubio</span></div>
+        <div id="agenda"></div>
+        <div class="prueba">
+          <div class="eyebrow">Prueba esto</div>
+          <ul>
+            <li><button type="button" data-escribe="Quiero agendar una cita">Escribe “quiero agendar una cita”</button></li>
+            <li><button type="button" data-escribe="¿Cuánto cuesta la valoración?">Pregunta cuánto cuesta la valoración</button></li>
+            <li><button type="button" data-accion="recordatorio">Ver el recordatorio que le llega un día antes (después de agendar)</button></li>
+            <li><button type="button" data-accion="instagram">Agendar por Instagram</button></li>
+            <li><button type="button" data-escribe="Quiero hablar con alguien">Pedir hablar con una persona</button></li>
+          </ul>
+          <p class="aviso" id="aviso" aria-live="polite"></p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="plan" role="tabpanel" aria-labelledby="t-plan" hidden>
+    <div class="eyebrow">Propuesta para Re Habilita</div>
+    <h2>Tu asistente de citas</h2>
+    <div class="plan">
+      <div class="columna">
+        <div class="caja principal">
+          <h3>WhatsApp + Instagram + Google Calendar</h3>
+          <div class="precios">
+            <div><span>Implementación</span><b>$4,000</b><small>$2,000 al arrancar y $2,000 cuando lo veas funcionando</small></div>
+            <div><span>Mensualidad</span><b>2 terapias</b><small>al mes, en lugar de pago en efectivo</small></div>
+          </div>
+          <ul>
+            <li>Agenda por WhatsApp e Instagram, las 24 horas.</li>
+            <li>Conectado al Google Calendar de George y de Rubio: solo ofrece horarios libres y aparta la cita ahí.</li>
+            <li>El paciente elige con quién atenderse, o “el primero libre”.</li>
+            <li>Recordatorio por WhatsApp un día antes, con botones para confirmar, cambiar o cancelar.</li>
+            <li>Cambiar o cancelar desde el chat, hasta 12 horas antes.</li>
+            <li>“Hablar con alguien”: el asistente se calla y contestan ustedes desde su celular.</li>
+            <li>No pregunta síntomas ni diagnósticos: solo nombre, WhatsApp y la cita.</li>
+          </ul>
+        </div>
+        <div class="caja">
+          <h4>Qué incluye la mensualidad</h4>
+          <ul>
+            <li>El asistente prendido las 24 horas, con respaldo de las citas.</li>
+            <li>Cambios cuando los necesiten: horarios, servicios, precios, vacaciones.</li>
+            <li>Mantenimiento si WhatsApp, Instagram o Google cambian algo.</li>
+            <li>Soporte directo por WhatsApp.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="columna">
+        <div class="caja">
+          <h4>Mensajes de WhatsApp</h4>
+          <p>Meta cobra los mensajes que manda el asistente directo a la tarjeta de su cuenta de negocio. Contestarle a quien escribe es gratis hasta 1,000 mensajes al mes, y cada recordatorio cuesta unos 16 centavos.</p>
+          <p class="chica">Con su volumen, calculen de $0 a $200 al mes. Instagram no cobra por mensaje.</p>
+        </div>
+        <div class="caja">
+          <h4>Siguientes pasos</h4>
+          <ol>
+            <li><b>Anticipo de $2,000</b> para arrancar.</li>
+            <li><b>Sus datos:</b> servicios, precios y duración; horario de cada uno; su Gmail para el calendario.</li>
+            <li><b>Videollamada de 20 minutos</b> para conectar WhatsApp, Instagram y los calendarios.</li>
+            <li><b>Lo prueban</b> con sus propios números antes de prenderlo para pacientes.</li>
+            <li><b>Arranca:</b> segundo pago de $2,000, y desde ese mes, 2 terapias al mes.</li>
+          </ol>
+        </div>
+        <p class="chica">Los servicios y precios de la demo son de ejemplo: se cambian por los suyos. Propuesta del 9 de noviembre de 2026.</p>
+      </div>
+    </div>
+  </section>
+
+  <p class="pie">Re Habilita · Calle José Luis Álamo 1004, 50120 Toluca de Lerdo</p>
+</div>
+
+<script>
+(() => {
+  // ─── Datos del consultorio (los mismos del bot real; servicios de ejemplo) ───
+  const BIENVENIDA = "¡Hola! 👋 Soy el asistente de *Re Habilita*. Te ayudo a agendar tu cita en segundos.";
+  const DIRECCION = "Calle José Luis Álamo 1004, 50120 Toluca de Lerdo";
+  const HORARIO = "Lunes a viernes 9:00 a 14:00 y 16:00 a 20:00 · Sábado 9:00 a 13:00";
+  const semana = (manana, tarde, sabado) => {
+    const h = {};
+    for (let d = 1; d <= 5; d++) h[d] = [manana, tarde];
+    if (sabado) h[6] = [sabado];
+    return h;
+  };
+  // Día de la semana de JavaScript: 0 = domingo.
+  const PROFESIONALES = [
+    { id: "george", nombre: "George", horario: semana([9, 14], [16, 20], [9, 13]) },
+    { id: "rubio", nombre: "Rubio", horario: semana([10, 14], [16, 19], null) },
+  ];
+  const SERVICIOS = [
+    { id: "valoracion", nombre: "Valoración inicial", duracion: 60, precio: 600, descripcion: "Primera vez: revisión, diagnóstico y plan de tratamiento." },
+    { id: "sesion", nombre: "Sesión de fisioterapia", duracion: 50, precio: 500, descripcion: "Seguimiento de tu tratamiento." },
+    { id: "deportiva", nombre: "Fisioterapia deportiva", duracion: 60, precio: 550, descripcion: "Lesiones y recuperación deportiva." },
+  ];
+  const REGLAS = { paso: 30, anticipacion: 2, dias: 14, cancelar: 12, recordatorio: 24, porPagina: 8 };
+
+  // ─── Utilidades ───
+  const $ = (s) => document.querySelector(s);
+  const MIN = 60000;
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const formato = (t) => esc(t).replace(/\*(.+?)\*/g, "<b>$1</b>").replace(/_(.+?)_/g, "<i>$1</i>").replace(/\n/g, "<br>");
+  const DIAS_CORTOS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+  const DIAS_LARGOS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+  const MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+  const MESES_LARGOS = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+  const dos = (n) => String(n).padStart(2, "0");
+  const inicioDia = (d) => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; };
+  const masDias = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+  const claveDia = (d) => `${d.getFullYear()}-${dos(d.getMonth() + 1)}-${dos(d.getDate())}`;
+  const deClave = (s) => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+  const claveHora = (d) => `${claveDia(d)}T${dos(d.getHours())}:${dos(d.getMinutes())}`;
+  const deClaveHora = (s) => { const [f, h] = s.split("T"); const d = deClave(f); const [hh, mm] = h.split(":").map(Number); d.setHours(hh, mm, 0, 0); return d; };
+  const horaTexto = (d) => `${(d.getHours() % 12) || 12}:${dos(d.getMinutes())} ${d.getHours() >= 12 ? "pm" : "am"}`;
+  const diaLargo = (d) => `${DIAS_LARGOS[d.getDay()]} ${d.getDate()} de ${MESES_LARGOS[d.getMonth()]}`;
+  const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+  const diaCorto = (d) => {
+    const hoy = inicioDia(new Date());
+    if (claveDia(d) === claveDia(hoy)) return "Hoy";
+    if (claveDia(d) === claveDia(masDias(hoy, 1))) return "Mañana";
+    return `${DIAS_CORTOS[d.getDay()]} ${d.getDate()} ${MESES[d.getMonth()]}`;
+  };
+  const pesos = (n) => "$" + n.toLocaleString("es-MX");
+  const normaliza = (t) => t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^\w\s:]/g, " ").replace(/\s+/g, " ").trim();
+  const servicio = (id) => SERVICIOS.find((s) => s.id === id);
+  const profesional = (id) => PROFESIONALES.find((p) => p.id === id);
+
+  // ─── Calendario de ejemplo: algunos pacientes ya agendados ───
+  function azar(semilla) { return () => { semilla = (semilla + 0x6D2B79F5) | 0; let t = Math.imul(semilla ^ (semilla >>> 15), 1 | semilla); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  const ocupado = { george: [], rubio: [] };
+  (() => {
+    const r = azar(11);
+    const hoy = inicioDia(new Date());
+    for (let i = 0; i < REGLAS.dias; i++) {
+      const dia = masDias(hoy, i);
+      for (const p of PROFESIONALES) {
+        for (const [abre, cierra] of p.horario[dia.getDay()] || []) {
+          for (let h = abre; h < cierra; h++) {
+            if (r() < 0.38) { const ini = new Date(dia); ini.setHours(h, 0, 0, 0); ocupado[p.id].push({ inicio: ini, fin: new Date(+ini + 60 * MIN) }); }
+          }
+        }
+      }
+    }
+  })();
+  const citas = [];
+  let siguienteCita = 1;
+  const activas = () => citas.filter((c) => c.estado !== "cancelada");
+
+  const libre = (pid, ini, fin) => ![...ocupado[pid], ...activas().filter((c) => c.profesional === pid)]
+    .some((o) => o.inicio < fin && ini < o.fin);
+  function espacios(p, s, dia) {
+    const minimo = new Date(Date.now() + REGLAS.anticipacion * 60 * MIN);
+    const resultado = [];
+    for (const [abre, cierra] of p.horario[dia.getDay()] || []) {
+      const fin = new Date(dia); fin.setHours(cierra, 0, 0, 0);
+      for (let ini = new Date(new Date(dia).setHours(abre, 0, 0, 0)); +ini + s.duracion * MIN <= +fin; ini = new Date(+ini + REGLAS.paso * MIN)) {
+        if (ini >= minimo && libre(p.id, ini, new Date(+ini + s.duracion * MIN))) resultado.push(ini);
+      }
+    }
+    return resultado;
+  }
+  function opcionesDelDia(s, profs, dia) {
+    const porHora = new Map();
+    for (const p of profs) for (const ini of espacios(p, s, dia)) if (!porHora.has(+ini)) porHora.set(+ini, p.id);
+    return [...porHora.entries()].sort((a, b) => a[0] - b[0]).map(([t, pid]) => [new Date(t), pid]);
+  }
+
+  // ─── Pacientes: uno por WhatsApp y otro por Instagram ───
+  const contactos = {
+    wa: { canal: "wa", paso: "nuevo", datos: {}, nombre: null, perfil: "Ana López", telefono: "7220000000", pausa: false },
+    ig: { canal: "ig", paso: "nuevo", datos: {}, nombre: null, perfil: "", telefono: null, pausa: false },
+  };
+  let activo = "wa";
+
+  // ─── Salida: los mensajes del bot se encolan y se pintan con "escribiendo" ───
+  let cola = [];
+  const decir = (c, m) => cola.push({ canal: c.canal, ...m });
+  const texto = (c, cuerpo) => decir(c, { tipo: "texto", cuerpo });
+  const botones = (c, cuerpo, ops) => decir(c, { tipo: "botones", cuerpo, ops });
+  const lista = (c, cuerpo, boton, filas) => decir(c, { tipo: "lista", cuerpo, boton, filas });
+  const chip = (canal, cuerpo) => cola.push({ canal, tipo: "chip", cuerpo });
+  const guardar = (c, paso, datos) => { c.paso = paso; c.datos = datos; };
+
+  // ─── La conversación (mismo flujo y textos que el bot real) ───
+  const PALABRAS_MENU = new Set(["menu", "inicio", "hola", "holi", "buenas", "buen dia", "buenos dias", "buenas tardes", "buenas noches", "hey", "que tal", "opciones"]);
+  const VOLVER_AL_BOT = new Set(["menu", "inicio", "opciones"]);
+  const AFIRMATIVOS = new Set(["si", "va", "ok", "okay", "confirmo", "confirmar", "sale", "listo", "de acuerdo", "perfecto"]);
+  const INTENCIONES = [
+    ["humano", /\b(humano|persona|hablar con|asesor|alguien|llamar|llamada|urgente)/],
+    ["citas", /\b(cancel|cambiar|cambio|mover|reagend|mis citas|mi cita|tengo cita)/],
+    ["servicios", /\b(precio|costo|cuanto|servicio|cobran|tarifa)/],
+    ["ubicacion", /\b(donde|direcc|ubica|como llego|horario|abren|cierran|mapa)/],
+    ["agendar", /\b(agend|cita|reserv|apart|consulta|turno|sesion|valoracion|espacio|disponib)/],
+    ["gracias", /\b(gracias|grax)/],
+  ];
+  const intencion = (t) => (INTENCIONES.find(([, rx]) => rx.test(t)) || [null])[0];
+  function limpiaNombre(txt) {
+    let l = txt.replace(/[^\p{L}\s.'-]/gu, "").replace(/\s+/g, " ").trim();
+    if (l.length < 2 || l.length > 60) return null;
+    return l.split(" ").map((p, i) => (i && ["de", "del", "la", "las", "los", "y"].includes(p.toLowerCase())) ? p.toLowerCase()
+      : (p === p.toLowerCase() || p === p.toUpperCase()) ? p.charAt(0).toUpperCase() + p.slice(1).toLowerCase() : p).join(" ");
+  }
+  function interpretaDia(t) {
+    const hoy = inicioDia(new Date());
+    if (t.includes("pasado manana")) return masDias(hoy, 2);
+    if (t.includes("manana") && !t.includes("de la manana")) return masDias(hoy, 1);
+    if (/\bhoy\b/.test(t)) return hoy;
+    const nombres = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"];
+    for (let i = 0; i < 7; i++) if (new RegExp(`\\b${nombres[i]}\\b`).test(t)) return masDias(hoy, (i - hoy.getDay() + 7) % 7);
+    return null;
+  }
+  function interpretaHora(t) {
+    const m = t.match(/\b(\d{1,2})(?::(\d{2}))?\s*(am|pm|a m|p m|de la tarde|de la noche|de la manana)?\b/);
+    if (!m) return null;
+    let h = Number(m[1]); const suf = (m[3] || "").replace(/ /g, "");
+    if (h > 23) return null;
+    if (["pm", "delatarde", "delanoche"].includes(suf) && h < 12) h += 12;
+    else if (["am", "delamanana"].includes(suf) && h === 12) h = 0;
+    else if (!suf && h >= 1 && h <= 7) h += 12;
+    return [h, m[2] ? Number(m[2]) : null];
+  }
+  function interpretaTelefono(txt) {
+    const d = txt.replace(/\D/g, "");
+    if (d.length === 10) return d;
+    if (d.length === 12 && d.startsWith("52")) return d.slice(2);
+    if (d.length === 13 && d.startsWith("521")) return d.slice(3);
+    return null;
+  }
+  const telefonoTexto = (d) => `${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6)}`;
+  const primerNombre = (n) => n.split(" ")[0];
+
+  function atender(c, e) {
+    const t = normaliza(e.texto || "");
+    const quiereMenu = e.opcion === "menu" || (!e.opcion && VOLVER_AL_BOT.has(t));
+    if (c.pausa) { if (!quiereMenu) return; c.pausa = false; }
+    if (e.opcion) return alOpcion(c, e.opcion);
+    return alTexto(c, e.texto, t);
+  }
+
+  function alOpcion(c, o) {
+    const d = c.datos;
+    const simples = {
+      "menu": () => menu(c, c.paso), "m:agendar": () => empezar(c, {}), "m:citas": () => misCitas(c),
+      "m:servicios": () => servicios(c), "m:ubicacion": () => ubicacion(c), "m:humano": () => humano(c),
+      "dm": () => mostrarDias(c, d), "n:perfil": () => siguienteDato(c, { ...d, nombre: c.perfil }),
+      "c:si": () => reservar(c, d), "c:otra": () => mostrarHoras(c, d, 0), "c:no": () => abandonar(c),
+    };
+    if (simples[o]) return simples[o]();
+    const i = o.indexOf(":"); const tipo = o.slice(0, i); const valor = o.slice(i + 1);
+    if (tipo === "s") return elegirServicio(c, d, valor);
+    if (tipo === "p") return elegirProfesional(c, d, valor);
+    if (tipo === "d") return mostrarHoras(c, { ...d, dia: valor }, 0);
+    if (tipo === "hm") return mostrarHoras(c, d, Number(valor) || 0);
+    if (tipo === "h") return elegirHora(c, d, valor);
+    if (["ver", "x", "xs", "r", "CONFIRMAR", "CAMBIAR", "CANCELAR"].includes(tipo)) {
+      const cita = citaPropia(c, valor);
+      if (!cita) { texto(c, "Esa cita ya no está activa."); return misCitas(c); }
+      return ({ ver: verCita, x: pedirCancelar, CANCELAR: pedirCancelar, xs: cancelar, r: cambiar, CAMBIAR: cambiar, CONFIRMAR: confirmarAsistencia })[tipo](c, cita);
+    }
+    return menu(c, c.paso);
+  }
+
+  function alTexto(c, crudo, t) {
+    const intento = intencion(t); const paso = c.paso; const d = c.datos;
+    if (paso === "nuevo" && (PALABRAS_MENU.has(t) || !intento)) return menu(c, paso);
+    if (PALABRAS_MENU.has(t)) return menu(c, paso);
+    if (paso === "confirmar" && AFIRMATIVOS.has(t)) return reservar(c, d);
+    if (paso === "telefono" && !["humano", "citas"].includes(intento)) {
+      const tel = interpretaTelefono(crudo);
+      if (!tel) return texto(c, "No me salió el número 😅 Escríbelo a 10 dígitos, por ejemplo 722 123 4567.");
+      c.telefono = tel;
+      return confirmar(c, { ...d, telefono: tel });
+    }
+    if ((paso === "nombre" && !["humano", "citas"].includes(intento)) || (paso === "confirmar" && !intento)) {
+      const nombre = limpiaNombre(crudo);
+      if (!nombre) return texto(c, "Escríbeme el nombre y apellido de quien va a la cita, por favor.");
+      return siguienteDato(c, { ...d, nombre });
+    }
+    if (paso === "dia") { const dia = interpretaDia(t); if (dia) return mostrarHoras(c, { ...d, dia: claveDia(dia) }, 0); }
+    if (paso === "hora") { const v = horaEscrita(t, d); if (v) return elegirHora(c, d, v); }
+    if (paso === "nuevo") texto(c, BIENVENIDA);
+    const rutas = { agendar: () => empezar(c, {}), citas: () => misCitas(c), servicios: () => servicios(c), ubicacion: () => ubicacion(c), humano: () => humano(c) };
+    if (rutas[intento]) return rutas[intento]();
+    if (intento === "gracias") return texto(c, "¡Con gusto! 🙌 Si necesitas algo más, escribe *menú*.");
+    texto(c, "Perdón, no te entendí 😅 Elige una opción:");
+    menu(c, "menu");
+  }
+
+  function menu(c, paso) {
+    guardar(c, "menu", {});
+    lista(c, paso === "nuevo" ? `${BIENVENIDA}\n\n¿En qué te ayudo?` : "¿En qué más te ayudo?", "Ver opciones", [
+      ["m:agendar", "Agendar cita", "Elige servicio, día y hora"], ["m:citas", "Mis citas", "Ver, cambiar o cancelar"],
+      ["m:servicios", "Servicios y precios", ""], ["m:ubicacion", "Ubicación y horario", ""],
+      ["m:humano", "Hablar con alguien", "Te contesta una persona del equipo"]]);
+  }
+  function servicios(c) {
+    guardar(c, "menu", {});
+    botones(c, "Estos son nuestros servicios:\n\n" + SERVICIOS.map((s) => `• *${s.nombre}* — ${pesos(s.precio)} · ${s.duracion} min\n  ${s.descripcion}`).join("\n"),
+      [["m:agendar", "Agendar cita"], ["menu", "Menú"]]);
+  }
+  function ubicacion(c) {
+    guardar(c, "menu", {});
+    botones(c, `*Re Habilita*\n\n📍 ${DIRECCION}\n🗺️ Ver en Google Maps\n🕐 ${HORARIO}`, [["m:agendar", "Agendar cita"], ["menu", "Menú"]]);
+  }
+  function humano(c) {
+    guardar(c, "menu", {}); c.pausa = true;
+    texto(c, "Listo, le aviso al equipo 🙌 Te escriben por aquí en cuanto puedan.\n\nSi quieres volver al asistente, escribe *menú*.");
+    chip(c.canal, "En la vida real, aquí te contesta George o Rubio desde su celular. Escribe “menú” para volver.");
+  }
+  function abandonar(c) { guardar(c, "menu", {}); botones(c, "Va, no agendé nada. ¿Te ayudo con algo más?", [["m:agendar", "Agendar cita"], ["menu", "Menú"]]); }
+
+  const candidatos = (d) => {
+    const s = servicio(d.servicio); if (!s) return [];
+    return d.profesional && d.profesional !== "*" ? PROFESIONALES.filter((p) => p.id === d.profesional) : PROFESIONALES;
+  };
+  const quien = (d) => { const p = profesional(d.profesional || ""); return p ? `con ${p.nombre}` : "con quien tenga espacio"; };
+
+  function empezar(c, d) {
+    const base = d.reemplaza ? { reemplaza: d.reemplaza } : {};
+    guardar(c, "servicio", base);
+    lista(c, "¿Qué servicio necesitas?", "Ver servicios", SERVICIOS.map((s) => [`s:${s.id}`, s.nombre, `${s.duracion} min · ${pesos(s.precio)}`]));
+  }
+  function elegirServicio(c, d, sid) {
+    const s = servicio(sid); if (!s) return empezar(c, d);
+    guardar(c, "profesional", { ...d, servicio: s.id });
+    botones(c, `*${s.nombre}*. ¿Con quién te quieres atender?`, [...PROFESIONALES.map((p) => [`p:${p.id}`, p.nombre]), ["p:*", "El primero libre"]]);
+  }
+  function elegirProfesional(c, d, pid) {
+    if (!servicio(d.servicio)) return empezar(c, d);
+    mostrarDias(c, { ...d, profesional: pid });
+  }
+  function mostrarDias(c, d) {
+    const s = servicio(d.servicio); if (!s) return empezar(c, d);
+    const hoy = inicioDia(new Date()); const filas = [];
+    for (let i = 0; i < REGLAS.dias && filas.length < 10; i++) {
+      const dia = masDias(hoy, i); const ops = opcionesDelDia(s, candidatos(d), dia);
+      if (ops.length) filas.push([`d:${claveDia(dia)}`, diaCorto(dia), `${ops.length} horario${ops.length !== 1 ? "s" : ""} · desde ${horaTexto(ops[0][0])}`]);
+    }
+    if (!filas.length) { guardar(c, "menu", {}); return botones(c, `No encontré espacios ${quien(d)} en los próximos ${REGLAS.dias} días 😕 ¿Quieres que alguien del equipo te escriba?`, [["m:humano", "Hablar con alguien"], ["menu", "Menú"]]); }
+    const { dia, ...sinDia } = d;
+    guardar(c, "dia", sinDia);
+    lista(c, `*${s.nombre}* ${quien(d)}. ¿Qué día te acomoda?\n\n_También puedes escribir, por ejemplo, "mañana" o "el jueves"._`, "Ver días", filas);
+  }
+  function mostrarHoras(c, d, pagina) {
+    const s = servicio(d.servicio); if (!s || !d.dia) return empezar(c, d);
+    const dia = deClave(d.dia); const ops = opcionesDelDia(s, candidatos(d), dia);
+    if (!ops.length) { texto(c, `El ${diaLargo(dia)} ya no tiene espacios ${quien(d)}.`); return mostrarDias(c, d); }
+    if (pagina * REGLAS.porPagina >= ops.length) pagina = 0;
+    const trozo = ops.slice(pagina * REGLAS.porPagina, (pagina + 1) * REGLAS.porPagina);
+    const varios = d.profesional === "*";
+    const filas = trozo.map(([ini, pid]) => [`h:${claveHora(ini)}|${pid}`, horaTexto(ini), varios ? `con ${profesional(pid).nombre}` : ""]);
+    if ((pagina + 1) * REGLAS.porPagina < ops.length) filas.push([`hm:${pagina + 1}`, "Más horarios", "Más tarde ese día"]);
+    filas.push(["dm", "Otro día", ""]);
+    guardar(c, "hora", { ...d, pagina });
+    lista(c, `Horarios del ${diaLargo(dia)} ${quien(d)}:`, "Ver horarios", filas);
+  }
+  function horaEscrita(t, d) {
+    const pedida = interpretaHora(t); if (!pedida || !d.dia) return null;
+    const ops = opcionesDelDia(servicio(d.servicio), candidatos(d), deClave(d.dia));
+    const hit = ops.find(([ini]) => ini.getHours() === pedida[0] && (pedida[1] === null || ini.getMinutes() === pedida[1]));
+    return hit ? `${claveHora(hit[0])}|${hit[1]}` : null;
+  }
+  const sigueLibre = (p, s, ini) => espacios(p, s, inicioDia(ini)).some((x) => +x === +ini);
+  function elegirHora(c, d, valor) {
+    const s = servicio(d.servicio); const [momento, pid] = valor.split("|"); const p = profesional(pid);
+    if (!s || !p) return empezar(c, d);
+    const ini = deClaveHora(momento);
+    if (!sigueLibre(p, s, ini)) { texto(c, "Uy, ese horario se acaba de ocupar 😕 Elige otro:"); return mostrarHoras(c, { ...d, dia: claveDia(ini) }, 0); }
+    const datos = { ...d, dia: claveDia(ini), inicio: momento, con: p.id };
+    if (c.nombre) datos.nombre = c.nombre;
+    if (c.canal === "ig" && c.telefono) datos.telefono = c.telefono;
+    siguienteDato(c, datos);
+  }
+  function siguienteDato(c, d) {
+    if (!d.nombre) {
+      guardar(c, "nombre", d);
+      const cuerpo = "¿A nombre de quién agendo la cita? Escríbeme nombre y apellido.";
+      return c.perfil ? botones(c, `${cuerpo}\n\nSi es para ti (${c.perfil}), toca el botón.`, [["n:perfil", "Es para mí"]]) : texto(c, cuerpo);
+    }
+    if (c.canal === "ig" && !d.telefono) { guardar(c, "telefono", d); return texto(c, "¿A qué WhatsApp te mando el recordatorio de tu cita? Escríbelo a 10 dígitos."); }
+    confirmar(c, d);
+  }
+  const detalle = (s, p, ini, nombre) => `🩺 ${s.nombre} (${s.duracion} min)\n👤 Con ${p.nombre}\n📅 ${cap(diaLargo(ini))}\n🕐 ${horaTexto(ini)}\n💵 ${pesos(s.precio)}\n🙋 A nombre de ${nombre}`;
+  function confirmar(c, d) {
+    const s = servicio(d.servicio); const p = profesional(d.con || "");
+    if (!s || !p || !d.inicio) return empezar(c, d);
+    if (!d.nombre || (c.canal === "ig" && !d.telefono)) return siguienteDato(c, d);
+    guardar(c, "confirmar", d);
+    const whatsapp = c.canal === "ig" ? `\n📱 Recordatorio por WhatsApp al ${telefonoTexto(d.telefono)}` : "";
+    botones(c, `${d.reemplaza ? "Así quedaría tu cita nueva (la anterior se cancela al confirmar):" : "Confirma tu cita:"}\n\n${detalle(s, p, deClaveHora(d.inicio), d.nombre)}${whatsapp}\n\n_Si es para otra persona, escríbeme su nombre._`,
+      [["c:si", "Confirmar"], ["c:otra", "Otra hora"], ["c:no", "Cancelar"]]);
+  }
+  function reservar(c, d) {
+    const s = servicio(d.servicio); const p = profesional(d.con || "");
+    if (!s || !p || !d.inicio || !d.nombre) return empezar(c, d);
+    const ini = deClaveHora(d.inicio);
+    if (!sigueLibre(p, s, ini)) { texto(c, "Uy, ese horario se acaba de ocupar 😕 Elige otro:"); return mostrarHoras(c, d, 0); }
+    const telefono = c.canal === "ig" ? d.telefono : c.telefono;
+    const cita = { id: siguienteCita++, contacto: c.canal, nombre: d.nombre, telefono, profesional: p.id, servicio: s.id,
+      inicio: ini, fin: new Date(+ini + s.duracion * MIN), estado: "agendada", nueva: true,
+      recordatorio: +ini - Date.now() > REGLAS.recordatorio * 60 * MIN ? "pendiente" : "no_aplica" };
+    citas.push(cita);
+    if (!c.nombre) c.nombre = d.nombre;
+    let cambio = "";
+    if (d.reemplaza) { const vieja = citaPropia(c, String(d.reemplaza)); if (vieja) { vieja.estado = "cancelada"; cambio = "Cambié tu cita. "; } }
+    guardar(c, "menu", {});
+    const por = c.canal === "ig" ? ` por WhatsApp al ${telefonoTexto(telefono)}` : "";
+    const aviso = cita.recordatorio === "pendiente" ? `${REGLAS.recordatorio} horas antes te mando un recordatorio${por}. ` : "";
+    botones(c, `✅ ¡Listo, ${primerNombre(d.nombre)}! ${cambio}Tu cita quedó agendada:\n\n${detalle(s, p, ini, d.nombre)}\n📍 ${DIRECCION}\n\n${aviso}Si necesitas cambiarla o cancelarla, escribe *mis citas*.`,
+      [["m:citas", "Mis citas"], ["menu", "Menú"]]);
+  }
+
+  // Las citas de este paciente: las que agendó aquí, y desde WhatsApp también las de Instagram que dejaron su número.
+  const esDe = (cita, c) => cita.contacto === c.canal || (c.canal === "wa" && !!cita.telefono && cita.telefono === c.telefono);
+  function citaPropia(c, valor) {
+    const cita = citas.find((x) => String(x.id) === valor);
+    return cita && esDe(cita, c) && cita.estado !== "cancelada" && cita.fin > new Date() ? cita : null;
+  }
+  const resumen = (cita) => `🩺 ${servicio(cita.servicio).nombre}\n👤 Con ${profesional(cita.profesional).nombre}\n📅 ${cap(diaLargo(cita.inicio))}, ${horaTexto(cita.inicio)}`;
+  const aTiempo = (cita) => +cita.inicio - Date.now() >= REGLAS.cancelar * 60 * MIN;
+  const fueraDeTiempo = (c, accion) => botones(c, `Tu cita es en menos de ${REGLAS.cancelar} horas, así que para ${accion}la escríbele directo al equipo.`, [["m:humano", "Hablar con alguien"], ["menu", "Menú"]]);
+  function misCitas(c) {
+    guardar(c, "menu", {});
+    const mias = activas().filter((x) => esDe(x, c) && x.fin > new Date()).sort((a, b) => a.inicio - b.inicio);
+    if (!mias.length) return botones(c, "No tienes citas agendadas.", [["m:agendar", "Agendar cita"], ["menu", "Menú"]]);
+    if (mias.length === 1) return verCita(c, mias[0]);
+    lista(c, "Estas son tus próximas citas. ¿Cuál quieres ver?", "Ver citas",
+      mias.slice(0, 10).map((x) => [`ver:${x.id}`, `${diaCorto(x.inicio)} ${horaTexto(x.inicio)}`, `${servicio(x.servicio).nombre} · ${profesional(x.profesional).nombre}`]));
+  }
+  function verCita(c, cita) { guardar(c, "menu", {}); botones(c, `Tu cita:\n\n${resumen(cita)}`, [[`r:${cita.id}`, "Cambiar"], [`x:${cita.id}`, "Cancelar"], ["menu", "Menú"]]); }
+  function pedirCancelar(c, cita) {
+    if (!aTiempo(cita)) return fueraDeTiempo(c, "cancelar");
+    botones(c, `¿Seguro que quieres cancelar esta cita?\n\n${resumen(cita)}`, [[`xs:${cita.id}`, "Sí, cancelar"], [`ver:${cita.id}`, "No"]]);
+  }
+  function cancelar(c, cita) {
+    if (!aTiempo(cita)) return fueraDeTiempo(c, "cancelar");
+    cita.estado = "cancelada"; guardar(c, "menu", {});
+    botones(c, "Listo, cancelé tu cita. ¿Quieres agendar otra?", [["m:agendar", "Agendar cita"], ["menu", "Menú"]]);
+  }
+  function cambiar(c, cita) {
+    if (!aTiempo(cita)) return fueraDeTiempo(c, "cambiar");
+    mostrarDias(c, { reemplaza: cita.id, servicio: cita.servicio, profesional: cita.profesional });
+  }
+  function confirmarAsistencia(c, cita) {
+    cita.estado = "confirmada"; guardar(c, "menu", {});
+    texto(c, `¡Gracias por confirmar, ${primerNombre(cita.nombre)}! Te esperamos el ${diaLargo(cita.inicio)} a las ${horaTexto(cita.inicio)} 💪`);
+  }
+
+  // ─── Pintar ───
+  const chats = { wa: $("#chat-wa"), ig: $("#chat-ig") };
+  const horaAhora = () => horaTexto(new Date());
+  function pintarUsuario(canal, cuerpo) {
+    quitarRapidas(canal);
+    chats[canal].querySelectorAll(".wa-boton, .wa-lista").forEach((b) => (b.disabled = true));
+    const fila = document.createElement("div"); fila.className = "fila out";
+    fila.innerHTML = `<div class="msg out">${esc(cuerpo)}<span class="hora">${horaAhora()}</span></div>`;
+    chats[canal].appendChild(fila); bajar(canal);
+  }
+  function quitarRapidas(canal) { chats[canal].querySelectorAll(".rapidas").forEach((r) => r.remove()); }
+  function pintarBot(m) {
+    const canal = m.canal; const chat = chats[canal];
+    if (m.tipo === "chip") { const ch = document.createElement("div"); ch.className = "chip"; ch.textContent = m.cuerpo; chat.appendChild(ch); return bajar(canal); }
+    const fila = document.createElement("div"); fila.className = "fila in";
+    let cuerpo = m.cuerpo;
+    const ops = m.tipo === "botones" || m.tipo === "plantilla" ? m.ops : m.tipo === "lista" ? m.filas.map(([i, t]) => [i, t]) : [];
+    if (canal === "ig" && m.tipo === "lista") cuerpo += "\n\n" + m.filas.map(([, t, dsc]) => `• ${t}${dsc ? ` (${dsc})` : ""}`).join("\n");
+    fila.innerHTML = `<div class="msg in">${formato(cuerpo)}<span class="hora">${horaAhora()}</span></div>`;
+    if (canal === "wa" && m.tipo === "lista") {
+      const b = document.createElement("div"); b.className = "wa-adjuntos";
+      b.innerHTML = `<button type="button" class="wa-boton wa-lista">☰ ${esc(m.boton)}</button>`;
+      b.firstChild.addEventListener("click", () => abrirHoja(m)); fila.appendChild(b);
+    } else if (canal === "wa" && ops.length) {
+      const b = document.createElement("div"); b.className = "wa-adjuntos";
+      for (const [id, t] of ops) { const bt = document.createElement("button"); bt.type = "button"; bt.className = "wa-boton"; bt.textContent = t; bt.addEventListener("click", () => tocar(canal, id, t)); b.appendChild(bt); }
+      fila.appendChild(b);
+    } else if (canal === "ig" && ops.length) {
+      const r = document.createElement("div"); r.className = "rapidas";
+      for (const [id, t] of ops.slice(0, 13)) { const bt = document.createElement("button"); bt.type = "button"; bt.className = "rapida"; bt.textContent = t.length > 20 ? t.slice(0, 19) + "…" : t; bt.addEventListener("click", () => tocar(canal, id, t)); r.appendChild(bt); }
+      fila.appendChild(r);
+    }
+    chat.appendChild(fila); bajar(canal);
+  }
+  const bajar = (canal) => { chats[canal].scrollTop = chats[canal].scrollHeight; };
+  function abrirHoja(m) {
+    $("#hoja-titulo").textContent = m.boton;
+    const cont = $("#hoja-filas"); cont.textContent = "";
+    for (const [id, t, dsc] of m.filas) {
+      const b = document.createElement("button"); b.type = "button"; b.className = "hoja-fila";
+      b.innerHTML = `<b>${esc(t)}</b>${dsc ? `<small>${esc(dsc)}</small>` : ""}`;
+      b.addEventListener("click", () => { cerrarHoja(); tocar("wa", id, t); });
+      cont.appendChild(b);
+    }
+    $("#hoja").hidden = false;
+  }
+  const cerrarHoja = () => { $("#hoja").hidden = true; };
+  $("#hoja-cerrar").addEventListener("click", cerrarHoja);
+  $("#hoja").addEventListener("click", (e) => { if (e.target.id === "hoja") cerrarHoja(); });
+
+  let ocupadoPintando = false;
+  const dormir = (ms) => new Promise((r) => setTimeout(r, ms));
+  const lento = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  async function vaciarCola(rapido) {
+    ocupadoPintando = true;
+    while (cola.length) {
+      const m = cola.shift();
+      if (!rapido && m.tipo !== "chip" && lento) {
+        const e = document.createElement("div"); e.className = "escribiendo"; e.innerHTML = "<span></span><span></span><span></span>";
+        chats[m.canal].appendChild(e); bajar(m.canal); await dormir(450 + Math.random() * 350); e.remove();
+      }
+      pintarBot(m);
+    }
+    ocupadoPintando = false;
+    pintarAgenda();
+  }
+  async function tocar(canal, opcion, titulo) {
+    if (ocupadoPintando) return;
+    pintarUsuario(canal, titulo); atender(contactos[canal], { opcion }); await vaciarCola();
+  }
+  async function escribir(canal, txt) {
+    txt = String(txt || "").trim(); if (!txt || ocupadoPintando) return;
+    pintarUsuario(canal, txt); atender(contactos[canal], { texto: txt }); await vaciarCola();
+  }
+
+  // ─── Agenda de los fisioterapeutas ───
+  function pintarAgenda() {
+    const cont = $("#agenda"); cont.textContent = "";
+    const hoy = inicioDia(new Date());
+    for (let i = 0; i < REGLAS.dias; i++) {
+      const dia = masDias(hoy, i); const k = claveDia(dia);
+      const delBot = citas.filter((c) => claveDia(c.inicio) === k);
+      if (i > 1 && !delBot.length) continue;
+      const eventos = [
+        ...PROFESIONALES.flatMap((p) => ocupado[p.id].filter((o) => claveDia(o.inicio) === k).map((o) => ({ ...o, profesional: p.id, tipo: "ocupado" }))),
+        ...delBot.map((c) => ({ ...c, tipo: "bot" })),
+      ].sort((a, b) => a.inicio - b.inicio || a.profesional.localeCompare(b.profesional));
+      if (!eventos.length) continue;
+      const bloque = document.createElement("div"); bloque.className = "dia";
+      const delBotActivas = delBot.filter((c) => c.estado !== "cancelada").length;
+      bloque.innerHTML = `<div class="dia-titulo">${esc(cap(diaLargo(dia)))} <span>${delBotActivas ? `${delBotActivas} por el asistente` : ""}</span></div>`;
+      for (const ev of eventos) {
+        const fila = document.createElement("div");
+        const nombreP = profesional(ev.profesional).nombre;
+        if (ev.tipo === "ocupado") {
+          fila.className = `evento ocupado ${ev.profesional}`;
+          fila.innerHTML = `<span class="h">${horaTexto(ev.inicio)}</span><span class="d">Paciente · ${esc(nombreP)}</span>`;
+        } else {
+          fila.className = `evento bot ${ev.profesional}${ev.estado === "cancelada" ? " cancelada" : ""}${ev.nueva ? " nuevo" : ""}`;
+          const canal = ev.contacto === "ig" ? "Instagram" : "WhatsApp";
+          const estado = ev.estado === "cancelada" ? "cancelada" : ev.estado === "confirmada" ? "confirmó asistencia ✓" : `agendada por ${canal}`;
+          fila.innerHTML = `<span class="h">${horaTexto(ev.inicio)}–${horaTexto(ev.fin)}</span><span class="d">${esc(servicio(ev.servicio).nombre)}: ${esc(ev.nombre)}<small>Con ${esc(nombreP)} · ${estado}</small></span>`;
+          ev.nueva = false;
+          const original = citas.find((c) => c.id === ev.id); if (original) original.nueva = false;
+        }
+        bloque.appendChild(fila);
+      }
+      cont.appendChild(bloque);
+    }
+  }
+
+  // ─── Recordatorio (sale por WhatsApp, aunque se haya agendado por Instagram) ───
+  async function verRecordatorio() {
+    const cita = activas().filter((c) => c.fin > new Date()).sort((a, b) => b.id - a.id)[0];
+    if (!cita) { $("#aviso").textContent = "Primero agenda una cita, y luego toca aquí para ver el recordatorio."; return; }
+    $("#aviso").textContent = "";
+    if (ocupadoPintando) return;
+    cambiarCanal("wa");
+    chip("wa", "Un día antes de la cita, le llega esto por WhatsApp ↓");
+    cola.push({ canal: "wa", tipo: "plantilla", cuerpo: `Hola ${primerNombre(cita.nombre)}, te recordamos tu cita el ${diaLargo(cita.inicio)} a las ${horaTexto(cita.inicio)} con ${profesional(cita.profesional).nombre}. ¿Nos confirmas?`,
+      ops: [[`CONFIRMAR:${cita.id}`, "Confirmar"], [`CAMBIAR:${cita.id}`, "Cambiar"], [`CANCELAR:${cita.id}`, "Cancelar"]] });
+    contactos.wa.paso = "menu";
+    await vaciarCola();
+  }
+
+  // ─── Canal activo ───
+  const arrancados = { wa: false, ig: false };
+  async function cambiarCanal(canal) {
+    activo = canal;
+    $("#pantalla").className = `pantalla ${canal}`;
+    chats.wa.hidden = canal !== "wa"; chats.ig.hidden = canal !== "ig";
+    $("#c-wa").setAttribute("aria-pressed", String(canal === "wa")); $("#c-ig").setAttribute("aria-pressed", String(canal === "ig"));
+    $("#estado").textContent = canal === "wa" ? "en línea" : "Activo ahora";
+    $("#entrada").placeholder = canal === "wa" ? "Escribe un mensaje" : "Envía un mensaje…";
+    cerrarHoja();
+    if (!arrancados[canal]) {
+      arrancados[canal] = true;
+      pintarUsuario(canal, "Hola"); atender(contactos[canal], { texto: "Hola" }); await vaciarCola(true);
+    }
+  }
+  document.querySelectorAll("[data-canal]").forEach((b) => b.addEventListener("click", () => cambiarCanal(b.dataset.canal)));
+  $("#formulario").addEventListener("submit", (e) => { e.preventDefault(); const i = $("#entrada"); escribir(activo, i.value); i.value = ""; });
+  document.querySelectorAll("[data-escribe]").forEach((b) => b.addEventListener("click", () => escribir(activo, b.dataset.escribe)));
+  document.querySelector('[data-accion="recordatorio"]').addEventListener("click", verRecordatorio);
+  document.querySelector('[data-accion="instagram"]').addEventListener("click", async () => {
+    await cambiarCanal("ig");
+    if (contactos.ig.paso === "menu") escribir("ig", "Quiero agendar una cita");
+  });
+
+  // ─── Pestañas ───
+  function abrir(id) {
+    if (!["demo", "plan"].includes(id)) id = "demo";
+    for (const t of ["demo", "plan"]) { document.getElementById(t).hidden = t !== id; document.getElementById("t-" + t).setAttribute("aria-selected", String(t === id)); }
+  }
+  document.querySelectorAll("[data-tab]").forEach((b) => b.addEventListener("click", () => { abrir(b.dataset.tab); history.replaceState(null, "", "#" + b.dataset.tab); }));
+  window.addEventListener("hashchange", () => abrir(location.hash.slice(1)));
+  abrir(location.hash.slice(1));
+
+  pintarAgenda();
+  cambiarCanal("wa");
+})();
+</script>
+</body>
+</html>
